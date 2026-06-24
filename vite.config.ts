@@ -1,6 +1,4 @@
-/// <reference types="vitest/config" />
 import { defineConfig } from 'vitest/config';
-
 import { playwright } from '@vitest/browser-playwright';
 import tailwindcss from '@tailwindcss/vite';
 import adapter from '@sveltejs/adapter-node';
