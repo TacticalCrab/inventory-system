@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { itemsVariants, item, itemProperty, location, stocks, stockItem, itemItemCategory, itemCategory } from "./schema";
+import { itemsVariants, item, itemProperty, user, account, session, location, stocks, stockItem, itemItemCategory, itemCategory } from "./schema";
 
 export const itemRelations = relations(item, ({one, many}) => ({
 	itemsVariant: one(itemsVariants, {
@@ -19,6 +19,25 @@ export const itemPropertyRelations = relations(itemProperty, ({one}) => ({
 	item: one(item, {
 		fields: [itemProperty.itemId],
 		references: [item.id]
+	}),
+}));
+
+export const accountRelations = relations(account, ({one}) => ({
+	user: one(user, {
+		fields: [account.userId],
+		references: [user.id]
+	}),
+}));
+
+export const userRelations = relations(user, ({many}) => ({
+	accounts: many(account),
+	sessions: many(session),
+}));
+
+export const sessionRelations = relations(session, ({one}) => ({
+	user: one(user, {
+		fields: [session.userId],
+		references: [user.id]
 	}),
 }));
 
