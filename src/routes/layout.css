@@ -3,3 +3,6 @@
 @plugin "daisyui" {
     themes: light --default
 }
+
+@source "../src/**/*.stories.{js,ts,jsx,tsx,svelte}";
+@source "../.storybook";

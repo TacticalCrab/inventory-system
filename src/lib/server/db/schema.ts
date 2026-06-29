@@ -1,19 +1,6 @@
-import { pgTable, foreignKey, integer, varchar, text, index, timestamp, unique, boolean, doublePrecision, primaryKey } from "drizzle-orm/pg-core"
+import { pgTable, foreignKey, integer, varchar, index, text, timestamp, unique, boolean, doublePrecision, primaryKey } from "drizzle-orm/pg-core"
 
-export const item = pgTable("item", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "item_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
-	name: varchar().notNull(),
-	description: text(),
-	imageUrl: varchar("image_url"),
-	variantId: integer("variant_id"),
-	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull()
-}, (table) => [
-	foreignKey({
-			columns: [table.variantId],
-			foreignColumns: [itemsVariants.id],
-			name: "item_variant_id_fkey"
-		}).onDelete("set null"),
-]);
+
 
 export const itemProperty = pgTable("item_property", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "item_property_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
@@ -94,6 +81,21 @@ export const session = pgTable("session", {
 	unique("session_token_unique").on(table.token),
 ]);
 
+export const item = pgTable("item", {
+	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "item_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
+	name: varchar().notNull(),
+	description: text(),
+	imageUrl: varchar("image_url"),
+	variantId: integer("variant_id"),
+	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	foreignKey({
+			columns: [table.variantId],
+			foreignColumns: [itemsVariants.id],
+			name: "item_variant_id_fkey"
+		}).onDelete("set null"),
+]);
+
 export const stocks = pgTable("stocks", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "stock_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
 	locationId: integer("location_id"),
@@ -126,7 +128,9 @@ export const stockItem = pgTable("stock_item", {
 export const itemCategory = pgTable("item_category", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "item_category_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),
 	name: varchar().notNull(),
-});
+}, (table) => [
+	unique("item_category_name_unique").on(table.name),
+]);
 
 export const itemsVariants = pgTable("items_variants", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity({ name: "item_variant_id_seq", startWith: 1, increment: 1, minValue: 1, maxValue: 2147483647, cache: 1 }),

@@ -1,25 +1,21 @@
 import { relations } from "drizzle-orm/relations";
-import { itemsVariants, item, itemProperty, user, account, session, location, stocks, stockItem, itemItemCategory, itemCategory } from "./schema";
-
-export const itemRelations = relations(item, ({one, many}) => ({
-	itemsVariant: one(itemsVariants, {
-		fields: [item.variantId],
-		references: [itemsVariants.id]
-	}),
-	itemProperties: many(itemProperty),
-	stockItems: many(stockItem),
-	itemItemCategories: many(itemItemCategory),
-}));
-
-export const itemsVariantsRelations = relations(itemsVariants, ({many}) => ({
-	items: many(item),
-}));
+import { item, itemProperty, user, account, session, itemsVariants, location, stocks, stockItem, itemItemCategory, itemCategory } from "./schema";
 
 export const itemPropertyRelations = relations(itemProperty, ({one}) => ({
 	item: one(item, {
 		fields: [itemProperty.itemId],
 		references: [item.id]
 	}),
+}));
+
+export const itemRelations = relations(item, ({one, many}) => ({
+	itemProperties: many(itemProperty),
+	itemsVariant: one(itemsVariants, {
+		fields: [item.variantId],
+		references: [itemsVariants.id]
+	}),
+	stockItems: many(stockItem),
+	itemItemCategories: many(itemItemCategory),
 }));
 
 export const accountRelations = relations(account, ({one}) => ({
@@ -39,6 +35,10 @@ export const sessionRelations = relations(session, ({one}) => ({
 		fields: [session.userId],
 		references: [user.id]
 	}),
+}));
+
+export const itemsVariantsRelations = relations(itemsVariants, ({many}) => ({
+	items: many(item),
 }));
 
 export const stocksRelations = relations(stocks, ({one, many}) => ({

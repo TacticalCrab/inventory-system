@@ -1,4 +1,6 @@
 import { db } from "$lib/server/db";
+import { item, itemCategory, itemItemCategory } from "$lib/server/db/schema";
+import { fail, type Actions } from "@sveltejs/kit";
 
 export async function load() {
     const rawItems = await db.query.item.findMany({
@@ -36,4 +38,50 @@ export async function load() {
     return {
         items
     };
+}
+
+export const actions: Actions = {
+    create: async ({request}) => {
+        const itemData = await request.formData();
+
+        if (!itemData.get("name")) {
+            return fail(403, {
+                message: "No name provided"
+            });
+        }
+
+        const name = itemData.get("name") as string;
+        const description = itemData.get("description") as string;
+        const categories = (itemData.get("categories") as string).split(",");
+
+        await db.transaction(async (tx) => {
+            const [newItem] = await tx.insert(item)
+                .values({
+                    name,
+                    description
+                })
+                .returning({
+                    id: item.id
+                });
+
+                for (const category of categories) {
+                    const [newCategory] = await tx.insert(itemCategory)
+                        .values({
+                            name: category
+                        })
+                        .onConflictDoUpdate({
+                            target: itemCategory.name,
+                            set: { name: category }
+                        })
+                        .returning({
+                            id: itemCategory.id
+                        });
+
+                    await tx.insert(itemItemCategory).values({
+                        itemId: newItem.id,
+                        itemCategoryId: newCategory.id,
+                    });
+                }
+        });
+    }
 }
