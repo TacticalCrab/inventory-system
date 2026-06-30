@@ -16,7 +16,7 @@
 <dialog
   bind:this={dialog} 
   class="modal">
-  <div class="modal-box">
+  <div class="modal-box max-w-200">
     <form method="dialog">
       <button
         class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" >
