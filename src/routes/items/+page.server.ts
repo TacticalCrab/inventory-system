@@ -1,5 +1,5 @@
 import { db } from "$lib/server/db";
-import { item, itemCategory, itemItemCategory } from "$lib/server/db/schema";
+import { item, itemCategory, itemItemCategory, itemProperty } from "$lib/server/db/schema";
 import { fail, type Actions } from "@sveltejs/kit";
 
 export async function load() {
@@ -10,7 +10,7 @@ export async function load() {
             description: true,
             createdAt: true
         },
-        orderBy: (item, {asc}) => asc(item.createdAt),
+        orderBy: (item, {desc}) => desc(item.createdAt),
         with: {
             itemProperties: {
                 columns: {
@@ -53,6 +53,7 @@ export const actions: Actions = {
         const name = itemData.get("name") as string;
         const description = itemData.get("description") as string;
         const categories = (itemData.get("categories") as string).split(",");
+        const properties = JSON.parse(itemData.get("properties") as string);
 
         await db.transaction(async (tx) => {
             const [newItem] = await tx.insert(item)
@@ -64,7 +65,13 @@ export const actions: Actions = {
                     id: item.id
                 });
 
-                for (const category of categories) {
+                for (let category of categories) {
+                    if (category.trim().length === 0) {
+                        continue;
+                    }
+
+                    category = category.trim();
+
                     const [newCategory] = await tx.insert(itemCategory)
                         .values({
                             name: category
@@ -80,6 +87,15 @@ export const actions: Actions = {
                     await tx.insert(itemItemCategory).values({
                         itemId: newItem.id,
                         itemCategoryId: newCategory.id,
+                    });
+                }
+
+                for (const property of properties) {
+                    await tx.insert(itemProperty).values({
+                        itemId: newItem.id,
+                        name: property.name,
+                        value: property.value,
+                        typeName: "str"
                     });
                 }
         });

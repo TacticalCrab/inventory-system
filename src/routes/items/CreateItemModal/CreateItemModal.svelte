@@ -24,10 +24,14 @@
       </button>
     </form>
 
-    <CreateItemForm bind:this={form} onsubmit={() => {
-      if (dialog) {
-        dialog.close();
-      }
-    }}/>
+    <CreateItemForm
+      method="POST"
+      action="?/create"
+      bind:this={form} 
+      onsubmit={() => {
+        if (dialog) {
+          dialog.close();
+        }
+      }}/>
   </div>
 </dialog>
