@@ -3,6 +3,7 @@
         value?: string[];
         enableSearch?: boolean;
         debounceSeconds?: number;
+        readonly?: boolean;
 
         onSearch?: (searchTerm: string) => Promise<string[]> | string[];
     }
@@ -11,6 +12,8 @@
         value: selectedCategories = $bindable([]),
         enableSearch = true,
         debounceSeconds = 1000,
+        readonly,
+
         onSearch
     }: CategoryPickerProps = $props();
 
@@ -63,22 +66,26 @@
             {#each selectedCategories as category (category)}
                 <div class="badge badge-primary">
                     {category}
-                    <button
-                        onclick={() => onCategoryRemove(category)} 
-                        type="button" 
-                        class="btn-ghost cursor-pointer">✕</button>
+                    {#if !readonly}
+                        <button
+                            onclick={() => onCategoryRemove(category)} 
+                            type="button" 
+                            class="btn-ghost cursor-pointer">✕</button>
+                    {/if}
                 </div>
             {/each}
         </div>
     </fieldset>
-    <input
-        onkeydown={onkeydown}
-        bind:value={searchValue}
-        type="text"
-        placeholder="Search..."
-        class="input input-sm w-full" 
-    />
-    {#if enableSearch}
+    {#if !readonly}
+        <input
+            onkeydown={onkeydown}
+            bind:value={searchValue}
+            type="text"
+            placeholder="Search..."
+            class="input input-sm w-full" 
+        />
+    {/if}
+    {#if enableSearch && !readonly}
         <div class="flex flex-wrap gap-1 p-2">
             {#each searchResults as searchResult (searchResult)}
                 <button

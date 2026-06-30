@@ -6,9 +6,13 @@
 
     interface PropertiesTableInputProps {
         value?: TableRow[];
+        readonly?: boolean;
     }
 
-    let { value: tableRows = $bindable([]) }: PropertiesTableInputProps = $props();
+    let { 
+        value: tableRows = $bindable([]),
+        readonly
+    }: PropertiesTableInputProps = $props();
 
     const addRow = (name: string, value: string) => {
         tableRows.push({
@@ -44,18 +48,21 @@
                         <td class="w-4">
                             {i + 1}.
                         </td>
-                        <td bind:innerText={tableRow.name} contenteditable="true">
-                            {tableRow.name}
-                        </td>
-                        <td bind:innerText={tableRow.value} contenteditable="true" >
-                            {tableRow.value}
-                        </td>
+                        {#if !readonly}
+                            <td contenteditable="true" bind:innerText={tableRow.name}></td>
+                            <td bind:innerText={tableRow.value} contenteditable="true" ></td>
+                        {:else}
+                            <td>{tableRow.name}</td>
+                            <td>{tableRow.value}</td>
+                        {/if}
                     </tr>
                 {/each}
             </tbody>
         </table>
     </div>
-    <button type="button" class="btn btn-sm btn-success w-full mt-4" onclick={() => addRow("", "")}>
-    Add row
-    </button>
+    {#if !readonly}
+        <button type="button" class="btn btn-sm btn-success w-full mt-4" onclick={() => addRow("", "")}>
+        Add row
+        </button>
+    {/if}
 </div>

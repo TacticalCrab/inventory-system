@@ -1,8 +1,11 @@
-<script>
+<script lang="ts">
     import ItemCard from './ItemCard/ItemCard.svelte';
     import CreateItemModal from './CreateItemModal/CreateItemModal.svelte';
+    import UpdateItemModal from './UpdateItemModal/UpdateItemModal.svelte';
 
     let { data } = $props();
+
+    let updateModal: UpdateItemModal;
 </script>
 
 <div class="w-full flex justify-center p-4">
@@ -11,7 +14,8 @@
 
 <div class="grid md:grid-cols-2 xl:grid-cols-3 justify-items-center gap-4 p-4">
     {#each data.items as item (item.id)}
-        <ItemCard 
+        <ItemCard
+            onEditClick={(itemData) => updateModal?.openModal(itemData)}
             name={item.name}
             description={item.description}
             properties={item.properties}
@@ -21,3 +25,5 @@
             openProperties={true}/>
     {/each}
 </div>
+
+<UpdateItemModal bind:this={updateModal}/>

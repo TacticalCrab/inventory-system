@@ -1,16 +1,22 @@
 <script lang="ts">
-    interface Props {
+    export interface Property {
+        name: string;
+        value: string;
+    }
+
+    export interface ItemData {
         name: string;
         description?: string | null;
-        properties?: {
-            name: string,
-            value: string
-        }[] | null,
+        properties?: Property[] | null,
         categories?: string[] | null;
         createdAt?: Date;
+    }
 
+    interface Props extends ItemData {
         openDescription?: boolean;
         openProperties?: boolean;
+
+        onEditClick?(item: ItemData): void;
     }
 
     const { 
@@ -21,8 +27,8 @@
         createdAt,
 
         openDescription = true,
-        openProperties = false
-
+        openProperties = false,
+        onEditClick
     }: Props = $props();
 
     let formattedDate = $derived.by(() => {
@@ -39,9 +45,24 @@
         return undefined;
     });
 
+    const _onEditClick = () => {
+        onEditClick?.({
+            name,
+            description,
+            categories,
+            properties,
+            createdAt,
+        });
+    }
+    
 </script>
 
 <div class="card bg-base-200 w-full shadow-sm">
+    {#if onEditClick}
+        <button type="button" onclick={_onEditClick}>
+            edit
+        </button>
+    {/if}
     <div class="card-body">
         <div class="card-title">{name}</div>
         {#if categories && categories.length > 0}
