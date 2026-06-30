@@ -1,8 +1,8 @@
 <script lang="ts">
-    import CreateItemForm from "./CreateItemForm/CreateItemForm.svelte";
+    import ItemForm from "../ItemForm/ItemForm.svelte";
     
     let dialog: HTMLDialogElement;
-    let form: CreateItemForm;
+    let form: ItemForm;
 </script>
 
 <button class="btn" onclick={() => {
@@ -24,7 +24,7 @@
       </button>
     </form>
 
-    <CreateItemForm
+    <ItemForm
       method="POST"
       action="?/create"
       bind:this={form} 

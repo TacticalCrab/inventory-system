@@ -4,14 +4,14 @@
     import CategoryPicker from "./CategoryPicker/CategoryPicker.svelte";
     import PropertiesTableInput from './PropertiesTableInput/PropertiesTableInput.svelte';
 
-    interface CreateItemFormProps {
+    interface ItemFormProps {
         method?: HTMLFormAttributes["method"];
         action?: string;
 
         onsubmit?(): void;
     }
 
-    const { method, action, onsubmit }: CreateItemFormProps = $props();
+    const { method, action, onsubmit }: ItemFormProps = $props();
 
     let categoryPicker: CategoryPicker;
     let propertiesTableInput: PropertiesTableInput;

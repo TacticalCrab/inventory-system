@@ -1,9 +1,9 @@
 <script module>
     import { defineMeta } from "@storybook/addon-svelte-csf";
-    import CreateItemForm from "./CreateItemForm.svelte";
+    import ItemForm from "./ItemForm.svelte";
 
     const { Story } = defineMeta({
-        title: "CreateItemForm",
+        title: "ItemForm",
         tags: ["autodocs"]
     })
 </script>
@@ -11,6 +11,6 @@
 
 <Story name="Create item form">
     <div class="w-100 border p-4">
-        <CreateItemForm/>
+        <ItemForm/>
     </div>
 </Story>
