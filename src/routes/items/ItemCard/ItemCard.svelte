@@ -1,10 +1,12 @@
 <script lang="ts">
     export interface Property {
+        id?: number;
         name: string;
         value: string;
     }
 
     export interface ItemData {
+        id?: number;
         name: string;
         description?: string | null;
         properties?: Property[] | null,
@@ -19,7 +21,8 @@
         onEditClick?(item: ItemData): void;
     }
 
-    const { 
+    const {
+        id,
         name, 
         description, 
         properties, 
@@ -47,6 +50,7 @@
 
     const _onEditClick = () => {
         onEditClick?.({
+            id,
             name,
             description,
             categories,
@@ -83,10 +87,10 @@
         {#if properties && properties.length > 0}
             <details class="collapse collapse-arrow bg-base-100 border border-base-300" open={openProperties}>
                 <summary class="collapse-title font-semibold">Properties</summary>
-                <div class="collapse-content">
+                <div class="collapse-content overflow-x-auto">
                     <table class="table table-xs">
                         <tbody>
-                            {#each properties as prop (prop.name)}
+                            {#each properties as prop (prop.id)}
                                 <tr>
                                     <td>{prop.name}</td>
                                     <td>{prop.value}</td>

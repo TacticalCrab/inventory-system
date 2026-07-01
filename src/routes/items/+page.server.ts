@@ -1,6 +1,8 @@
 import { db } from "$lib/server/db";
+import { updateItemCategoriesByNames, updateItemPropertiesByIds, type Property } from "$lib/server/db/queries/item";
 import { item, itemCategory, itemItemCategory, itemProperty } from "$lib/server/db/schema";
 import { fail, type Actions } from "@sveltejs/kit";
+import { eq } from "drizzle-orm";
 
 export async function load() {
     const rawItems = await db.query.item.findMany({
@@ -40,20 +42,22 @@ export async function load() {
     };
 }
 
+
+
 export const actions: Actions = {
     create: async ({request}) => {
         const itemData = await request.formData();
 
         if (!itemData.get("name")) {
             return fail(403, {
+                missing: true,
                 message: "No name provided"
             });
         }
-
         const name = itemData.get("name") as string;
         const description = itemData.get("description") as string;
         const categories = (itemData.get("categories") as string).split(",");
-        const properties = JSON.parse(itemData.get("properties") as string);
+        const properties = JSON.parse(itemData.get("properties") as string) as Record<string, string>[];
 
         await db.transaction(async (tx) => {
             const [newItem] = await tx.insert(item)
@@ -65,9 +69,9 @@ export const actions: Actions = {
                     id: item.id
                 });
 
-                for (let category of categories) {
+                await Promise.all(categories.map(async (category) => {
                     if (category.trim().length === 0) {
-                        continue;
+                        return;
                     }
 
                     category = category.trim();
@@ -88,16 +92,45 @@ export const actions: Actions = {
                         itemId: newItem.id,
                         itemCategoryId: newCategory.id,
                     });
-                }
+                }));
 
-                for (const property of properties) {
-                    await tx.insert(itemProperty).values({
+                await Promise.all(properties.map((property: Record<string, string>) => {
+                    return tx.insert(itemProperty).values({
                         itemId: newItem.id,
                         name: property.name,
                         value: property.value,
                         typeName: "str"
                     });
-                }
+                }))
+        });
+    },
+
+    update: async ({request}) => {
+        const itemData = await request.formData();
+
+        if (!itemData.get("id")) {
+            return fail(403, {
+                missing: true,
+                message: "No ID provided"
+            });
+        }
+
+        const itemId = parseInt(itemData.get("id") as string);
+        const name = itemData.get("name") as string;
+        const description = itemData.get("description") as string;
+        const categories = (itemData.get("categories") as string).split(",").filter((c) => c.trim().length > 0);
+        const properties = JSON.parse(itemData.get("properties") as string) as Property[];
+
+        await db.transaction(async (tx) => {
+            await tx.update(item)
+                .set({
+                    name,
+                    description
+                })
+                .where(eq(item.id, itemId));
+
+                await updateItemCategoriesByNames(tx, itemId, categories);
+                await updateItemPropertiesByIds(tx, itemId, properties);
         });
     }
 }

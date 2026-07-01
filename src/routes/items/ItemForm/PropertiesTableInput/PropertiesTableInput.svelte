@@ -1,5 +1,8 @@
 <script lang="ts">
+	import DeleteButton from "$lib/ui/common/DeleteButton.svelte";
+
     type TableRow = {
+        id?: number;
         name: string;
         value: string;
     };
@@ -16,9 +19,14 @@
 
     const addRow = (name: string, value: string) => {
         tableRows.push({
+            id: undefined,
             name,
             value
         });
+    }
+
+    const removeRow = (rowIndex: number) => {
+        tableRows.splice(rowIndex, 1);
     }
 
     export function clear() {
@@ -47,7 +55,10 @@
                 <tbody>
                     {#each tableRows as tableRow, i (i)}
                         <tr>
-                            <td class="w-4">
+                            <td class="w-20 flex items-center gap-4">
+                                {#if !readonly}
+                                    <DeleteButton onclick={() => removeRow(i)}/>
+                                {/if}
                                 {i + 1}.
                             </td>
                             {#if !readonly}

@@ -10,8 +10,10 @@
         method?: HTMLFormAttributes["method"];
         action?: string;
         readonly?: boolean;
+        errorMessage?: string | null;
 
         onsubmit?(): void;
+        onsuccess?(): void;
     }
 
     const {
@@ -19,13 +21,16 @@
         method,
         action,
         readonly,
+        errorMessage,
 
-        onsubmit
+        onsubmit,
+        onsuccess
     }: ItemFormProps = $props();
 
     let categoryPicker: CategoryPicker;
     let propertiesTableInput: PropertiesTableInput;
 
+    let id: number | null = $state(null);
     let name = $state("");
     let description = $state("");
     let categories: string[] = $state([]);
@@ -51,6 +56,7 @@
     }
 
     interface FormData {
+        id?: number | null;
         name?: string | null;
         description?: string | null;
         categories?: string[] | null;
@@ -58,24 +64,41 @@
     }
 
     export function setData(data: FormData) {
+        console.log(data);
+        id = data.id || null;
         name = data.name || "";
         description = data.description || "";
         categories = data.categories || [];
         properties = data.properties || [];
     }
+
 </script>
 
 <form
     method={method}
     action={action} 
-    onsubmit={onsubmit} 
+    onsubmit={onsubmit}
     use:enhance={({ formData }) => {
+        if (id) formData.append('id', id.toString());
         formData.append('properties', JSON.stringify(properties));
+
+        return async ({result, update}) => {
+            await update();
+
+            if (result.type === 'success') {
+                onsuccess?.();
+            }
+        }
     }}>
 
     {#if title}
         <h2>{title}</h2>
     {/if}
+
+    {#if errorMessage}
+		<p class="error-message">{errorMessage}</p>
+	{/if}
+
     <fieldset class="fieldset">
         <legend class="fieldset-legend">Item name</legend>
         <input bind:value={name} {readonly} name="name" type="text" class="input" placeholder="name" required/>
@@ -107,3 +130,12 @@
         <button type="submit" class="btn btn-success mt-4 w-full">Save</button>
     {/if}
 </form>
+
+<style>
+	.error-message {
+		color: #ff3e00;
+		font-weight: bold;
+		font-size: 0.9rem;
+		margin-top: 0.25rem;
+	}
+</style>

@@ -15,14 +15,17 @@
 <div class="grid md:grid-cols-2 xl:grid-cols-3 justify-items-center gap-4 p-4">
     {#each data.items as item (item.id)}
         <ItemCard
-            onEditClick={(itemData) => updateModal?.openModal(itemData)}
+            id={item.id}
             name={item.name}
             description={item.description}
             properties={item.properties}
             categories={item.categories}
             createdAt={new Date(item.createdAt)}
 
-            openProperties={true}/>
+            openProperties={true}
+
+            onEditClick={(itemData) => updateModal?.openModal(itemData)}
+            />
     {/each}
 </div>
 

@@ -1,25 +1,25 @@
 <script lang="ts">
+	import { page } from "$app/state";
+	import { getToastContext } from "$lib/ui/toaster/toast.svelte";
 	import type { ItemData } from "../ItemCard/ItemCard.svelte";
     import ItemForm from "../ItemForm/ItemForm.svelte";
-    
+
+    const toastState = getToastContext();
+
     let dialog: HTMLDialogElement;
     let form: ItemForm;
 
     export function openModal(itemData: ItemData) {
         form.clear();
+        errorMessage = "";
         dialog.showModal();
         form.setData(itemData);
     }
+
+    let errorMessage: string | null = $derived(page?.form?.message);
+
 </script>
 
-<button class="btn" onclick={() => {
-  if (dialog) {
-    form.clear()
-    dialog.showModal();
-  }
-}}>
-  open modal
-</button>
 <dialog
   bind:this={dialog} 
   class="modal">
@@ -35,11 +35,13 @@
       title="Update Item"
       method="POST"
       action="?/update"
-      readonly={true}
-      bind:this={form} 
-      onsubmit={() => {
+      readonly={false}
+      bind:this={form}
+      errorMessage={errorMessage}
+      onsuccess={() => {
         if (dialog) {
           dialog.close();
+          toastState.success("Item Updated!");
         }
       }}/>
   </div>

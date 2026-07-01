@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { getToastContext } from "$lib/ui/toaster/toast.svelte";
     import ItemForm from "../ItemForm/ItemForm.svelte";
     
+    const toastState = getToastContext();
+
     let dialog: HTMLDialogElement;
     let form: ItemForm;
 </script>
@@ -29,9 +32,10 @@
       method="POST"
       action="?/create"
       bind:this={form} 
-      onsubmit={() => {
+      onsuccess={() => {
         if (dialog) {
           dialog.close();
+          toastState.success("Item Updated!");
         }
       }}/>
   </div>
