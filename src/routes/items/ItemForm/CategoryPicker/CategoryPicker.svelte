@@ -61,7 +61,7 @@
 <div class="rounded-field border-neutral-content border p-2">
     <input class="hidden" name="categories" value={selectedCategories.join(",")}>
     <fieldset class="fieldset">
-        <legend class="fieldset-legend">Pick categories</legend>
+        <legend class="fieldset-legend">Categories</legend>
         <div class="flex flex-wrap gap-1 p-2">
             {#each selectedCategories as category (category)}
                 <div class="badge badge-primary">

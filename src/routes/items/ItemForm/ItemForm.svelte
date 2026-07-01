@@ -6,6 +6,7 @@
 	import type { Property } from '../ItemCard/ItemCard.svelte';
 
     interface ItemFormProps {
+        title?: string;
         method?: HTMLFormAttributes["method"];
         action?: string;
         readonly?: boolean;
@@ -13,7 +14,14 @@
         onsubmit?(): void;
     }
 
-    const { method, action, readonly, onsubmit }: ItemFormProps = $props();
+    const {
+        title, 
+        method,
+        action,
+        readonly,
+
+        onsubmit
+    }: ItemFormProps = $props();
 
     let categoryPicker: CategoryPicker;
     let propertiesTableInput: PropertiesTableInput;
@@ -65,8 +73,9 @@
         formData.append('properties', JSON.stringify(properties));
     }}>
 
-    <h2>Create Item</h2>
-
+    {#if title}
+        <h2>{title}</h2>
+    {/if}
     <fieldset class="fieldset">
         <legend class="fieldset-legend">Item name</legend>
         <input bind:value={name} {readonly} name="name" type="text" class="input" placeholder="name" required/>
@@ -78,14 +87,14 @@
         <div class="label">Optional</div>
     </fieldset>
 
-    <div class="mt-2">
+    <div class="mt-4">
         <PropertiesTableInput
             bind:this={propertiesTableInput}
             bind:value={properties}
             {readonly}/>
     </div>
 
-    <div class="mt-2">
+    <div class="mt-4">
         <CategoryPicker
             bind:this={categoryPicker}
             bind:value={categories}

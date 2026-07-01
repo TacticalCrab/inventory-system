@@ -25,6 +25,7 @@
     </form>
 
     <ItemForm
+      title="Create Item"
       method="POST"
       action="?/create"
       bind:this={form} 

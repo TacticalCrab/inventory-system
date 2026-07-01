@@ -32,8 +32,9 @@
     </form>
 
     <ItemForm
+      title="Update Item"
       method="POST"
-      action="?/create"
+      action="?/update"
       readonly={true}
       bind:this={form} 
       onsubmit={() => {
