@@ -3,8 +3,12 @@ import { updateItemCategoriesByNames, updateItemPropertiesByIds, type Property }
 import { item, itemCategory, itemItemCategory, itemProperty } from "$lib/server/db/schema";
 import { fail, type Actions } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
+import type { PageServerLoad } from "./$types";
 
-export async function load() {
+
+export const load: PageServerLoad = async ({depends}) => {
+    depends('data:items');
+
     const rawItems = await db.query.item.findMany({
         columns: {
             id: true,
@@ -103,6 +107,22 @@ export const actions: Actions = {
                     });
                 }))
         });
+    },
+
+    delete: async ({ request }) => {
+        const itemData = await request.formData();
+
+        if (!itemData.get("id")) {
+            return fail(403, {
+                missing: true,
+                message: "No ID provided"
+            });
+        }
+
+        const itemId = parseInt(itemData.get("id") as string);
+
+        await db.delete(item)
+            .where(eq(item.id, itemId));
     },
 
     update: async ({request}) => {

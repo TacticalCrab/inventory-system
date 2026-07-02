@@ -1,4 +1,7 @@
 <script lang="ts">
+	import DeleteButton from "$lib/ui/common/DeleteButton.svelte";
+	import EditButton from "$lib/ui/common/EditButton.svelte";
+
     export interface Property {
         id?: number;
         name: string;
@@ -19,6 +22,7 @@
         openProperties?: boolean;
 
         onEditClick?(item: ItemData): void;
+        onDeleteClick?(item: ItemData): void;
     }
 
     const {
@@ -31,7 +35,8 @@
 
         openDescription = true,
         openProperties = false,
-        onEditClick
+        onEditClick,
+        onDeleteClick
     }: Props = $props();
 
     let formattedDate = $derived.by(() => {
@@ -58,17 +63,33 @@
             createdAt,
         });
     }
+
+    const _onDeleteClick = () => {
+        onDeleteClick?.({
+            id,
+            name,
+            description,
+            categories,
+            properties,
+            createdAt
+        });
+    }
     
 </script>
 
 <div class="card bg-base-200 w-full shadow-sm">
-    {#if onEditClick}
-        <button type="button" onclick={_onEditClick}>
-            edit
-        </button>
-    {/if}
     <div class="card-body">
-        <div class="card-title">{name}</div>
+        <div class="flex justify-between">
+            <div class="card-title">{name}</div>
+            <div class="flex gap-2">
+                {#if onEditClick}
+                    <EditButton onclick={_onEditClick} />
+                {/if}
+                {#if onDeleteClick}
+                    <DeleteButton onclick={_onDeleteClick} />
+                {/if}
+            </div>
+        </div>
         {#if categories && categories.length > 0}
             <div class="flex gap-1 flex-wrap">
                 {#each categories as category (category)}
