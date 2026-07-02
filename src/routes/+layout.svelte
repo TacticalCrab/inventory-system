@@ -7,7 +7,7 @@
 
 	setToastContext();
 
-	let { children } = $props();
+	let { children, data } = $props();
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
@@ -18,10 +18,27 @@
 		class="btn btn-ghost text-xl">
 		Inventory System
 	</a>
-	<div class="ml-4">
+	<div class="ml-4 flex gap-2">
 		<a href={resolve('/items')} aria-label="items">
 			Items
 		</a>
+		<div class="dropdown dropdown-hover">
+			<a href={resolve('/locations')} aria-label="items">
+				<div tabindex="0" role="button">
+					Locations
+				</div>
+			</a>
+			<ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+				{#each data.locations as location (location.id)}
+					<li>
+						<a href={resolve(`/locations/${location.id}`)} aria-label={location.name}>
+							{location.name}
+						</a>
+					</li>
+				{/each}
+			</ul>
+		</div>
+
 	</div>
 </div>
 {@render children()}

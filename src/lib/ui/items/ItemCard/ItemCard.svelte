@@ -1,6 +1,7 @@
 <script lang="ts">
 	import DeleteButton from "$lib/ui/common/DeleteButton.svelte";
 	import EditButton from "$lib/ui/common/EditButton.svelte";
+	import type { Item } from "$lib/ui/types/Item";
 
     export interface Property {
         id?: number;
@@ -8,21 +9,12 @@
         value: string;
     }
 
-    export interface ItemData {
-        id?: number;
-        name: string;
-        description?: string | null;
-        properties?: Property[] | null,
-        categories?: string[] | null;
-        createdAt?: Date;
-    }
-
-    interface Props extends ItemData {
+    interface Props extends Item {
         openDescription?: boolean;
         openProperties?: boolean;
 
-        onEditClick?(item: ItemData): void;
-        onDeleteClick?(item: ItemData): void;
+        onEditClick?(item: Item): void;
+        onDeleteClick?(itemId: Item["id"]): void;
     }
 
     const {
@@ -41,12 +33,13 @@
 
     let formattedDate = $derived.by(() => {
         if (createdAt) {
-            const day = String(createdAt.getDate()).padStart(2, '0');
-            const month = String(createdAt.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed!
-            const year = createdAt.getFullYear();
+            const createdAtDate = new Date(createdAt);
+            const day = String(createdAtDate.getDate()).padStart(2, '0');
+            const month = String(createdAtDate.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed!
+            const year = createdAtDate.getFullYear();
 
-            const hours = String(createdAt.getHours()).padStart(2, '0');
-            const minutes = String(createdAt.getMinutes()).padStart(2, '0');
+            const hours = String(createdAtDate.getHours()).padStart(2, '0');
+            const minutes = String(createdAtDate.getMinutes()).padStart(2, '0');
 
             return `${day}.${month}.${year} ${hours}:${minutes}`;
         }
@@ -61,18 +54,11 @@
             categories,
             properties,
             createdAt,
-        });
+        } as Item);
     }
 
     const _onDeleteClick = () => {
-        onDeleteClick?.({
-            id,
-            name,
-            description,
-            categories,
-            properties,
-            createdAt
-        });
+        onDeleteClick?.(id);
     }
     
 </script>

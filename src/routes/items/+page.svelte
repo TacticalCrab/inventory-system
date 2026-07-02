@@ -1,20 +1,20 @@
 <script lang="ts">
     import { invalidate } from '$app/navigation';
-    import ItemCard from './ItemCard/ItemCard.svelte';
-    import CreateItemModal from './CreateItemModal/CreateItemModal.svelte';
-    import UpdateItemModal from './UpdateItemModal/UpdateItemModal.svelte';
+	import ItemList from '$lib/ui/items/ItemList.svelte';
+	import CreateItemModal from '$lib/ui/items/CreateItemModal/CreateItemModal.svelte';
+	import UpdateItemModal from '$lib/ui/items/UpdateItemModal/UpdateItemModal.svelte';
 
     let { data } = $props();
 
     let updateModal: UpdateItemModal;
 
-    const handleDelete = async (itemData: { id?: number }) => {
-        if (!itemData.id) {
+    const handleDelete = async (itemId: number) => {
+        if (!itemId) {
             return;
         }
 
         const formData = new FormData();
-        formData.set('id', itemData.id.toString());
+        formData.set('id', itemId.toString());
 
         const response = await fetch('?/delete', {
             method: 'POST',
@@ -31,22 +31,10 @@
     <CreateItemModal/>
 </div>
 
-<div class="grid md:grid-cols-2 xl:grid-cols-3 justify-items-center gap-4 p-4">
-    {#each data.items as item (item.id)}
-        <ItemCard
-            id={item.id}
-            name={item.name}
-            description={item.description}
-            properties={item.properties}
-            categories={item.categories}
-            createdAt={new Date(item.createdAt)}
-
-            openProperties={true}
-
-            onEditClick={(itemData) => updateModal?.openModal(itemData)}
-            onDeleteClick={handleDelete}
-            />
-    {/each}
-</div>
+<ItemList
+    items={data.items}
+    onEditClick={(itemData) => updateModal?.openModal(itemData)}
+    onDeleteClick={handleDelete}
+/>
 
 <UpdateItemModal bind:this={updateModal}/>
