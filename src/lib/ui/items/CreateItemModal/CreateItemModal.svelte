@@ -1,5 +1,5 @@
 <script lang="ts">
-	import CreateButton from "$lib/ui/common/CreateButton.svelte";
+	import CreateButton from "$lib/ui/common/buttons/CreateButton.svelte";
     import { getToastContext } from "$lib/ui/toaster/toast.svelte";
     import ItemForm from "../ItemForm/ItemForm.svelte";
 

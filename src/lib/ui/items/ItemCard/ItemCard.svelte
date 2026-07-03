@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from "$app/paths";
-	import DeleteButton from "$lib/ui/common/DeleteButton.svelte";
-	import EditButton from "$lib/ui/common/EditButton.svelte";
+	import DeleteButton from "$lib/ui/common/buttons/DeleteButton.svelte";
+	import EditButton from "$lib/ui/common/buttons/EditButton.svelte";
 	import type { Item } from "$lib/ui/types/Item";
 
     export interface Property {
