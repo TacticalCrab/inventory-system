@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CreateButton from "$lib/ui/common/CreateButton.svelte";
     import { getToastContext } from "$lib/ui/toaster/toast.svelte";
     import ItemForm from "../ItemForm/ItemForm.svelte";
 
@@ -8,14 +9,15 @@
     let form: ItemForm;
 </script>
 
-<button class="btn" onclick={() => {
-  if (dialog) {
-    form.clear()
-    dialog.showModal();
-  }
-}}>
-  open modal
-</button>
+
+<CreateButton
+  onclick={() => {
+    if (dialog) {
+      form.clear()
+      dialog.showModal();
+    }
+  }}
+/>
 <dialog
   bind:this={dialog} 
   class="modal">

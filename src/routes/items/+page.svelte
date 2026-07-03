@@ -1,10 +1,32 @@
 <script lang="ts">
-    import { invalidate } from '$app/navigation';
+    import { goto, invalidate } from '$app/navigation';
 	import ItemList from '$lib/ui/items/ItemList.svelte';
 	import CreateItemModal from '$lib/ui/items/CreateItemModal/CreateItemModal.svelte';
 	import UpdateItemModal from '$lib/ui/items/UpdateItemModal/UpdateItemModal.svelte';
+	import InputSearch from '$lib/ui/common/InputSearch.svelte';
+	import { page } from '$app/state';
+	import type { ResolvedPathname } from '$app/types';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 
     let { data } = $props();
+
+    let searchInput = $state("");
+
+    function handleSearch() {
+        const params = new SvelteURLSearchParams(page.url.searchParams);
+
+        params.delete("q");
+        if (searchInput) {
+            searchInput.split(" ").filter(w => w.trim().length > 0).forEach((p) => params.append("q", p))
+        }
+
+        const targetUrl = `?${params.toString()}` as ResolvedPathname;
+        goto(targetUrl, {
+			keepFocus: true,
+			noScroll: true,
+			replaceState: true
+		});
+	}
 
     let updateModal: UpdateItemModal;
 
@@ -27,7 +49,11 @@
     };
 </script>
 
-<div class="w-full flex justify-center p-4">
+<div class="p-4 flex gap-4 items-center">
+    <InputSearch
+        bind:value={searchInput}
+        onSearchClick={() => handleSearch()}
+    />
     <CreateItemModal/>
 </div>
 

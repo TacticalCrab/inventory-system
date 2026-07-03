@@ -2,13 +2,16 @@ import { db } from "$lib/server/db";
 import { createItem, updateItem } from "$lib/server/db/queries/item";
 import { item } from "$lib/server/db/schema";
 import { fail, type Actions } from "@sveltejs/kit";
-import { eq } from "drizzle-orm";
+import { and, eq, ilike } from "drizzle-orm";
 import type { PageServerLoad } from "./$types";
 import type { Property } from "$lib/ui/types/Item";
 
 
-export const load: PageServerLoad = async ({depends}) => {
+export const load: PageServerLoad = async ({depends, url}) => {
     depends('data:items');
+
+    const searchQuery = url.searchParams.getAll('q') || '';
+    const conditions = searchQuery.map(word => ilike(item.name, `%${word}%`));
 
     const rawItems = await db.query.item.findMany({
         columns: {
@@ -18,6 +21,7 @@ export const load: PageServerLoad = async ({depends}) => {
             createdAt: true,
             location: true
         },
+        where: conditions.length > 0 ? and(...conditions) : undefined,
         orderBy: (item, {desc}) => desc(item.createdAt),
         with: {
             itemProperties: {
