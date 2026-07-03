@@ -14,7 +14,8 @@ export const load: PageServerLoad = async ({depends}) => {
             id: true,
             name: true,
             description: true,
-            createdAt: true
+            createdAt: true,
+            location: true
         },
         orderBy: (item, {desc}) => desc(item.createdAt),
         with: {
@@ -29,16 +30,34 @@ export const load: PageServerLoad = async ({depends}) => {
                 with: {
                     itemCategory: true
                 }
+            },
+            stockItems: {
+                with: {
+                    stock: {
+                        with: {
+                            location: {
+                                columns: {
+                                    id: true,
+                                    name: true
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
-    })
+    });
 
-    const items = rawItems.map(({ itemProperties, itemItemCategories, ...item }) => ({
+    const items = rawItems.map(({ itemProperties, itemItemCategories, stockItems, ...item }) => ({
         ...item,
         properties: [
             ...itemProperties
         ],
-        categories: itemItemCategories.map((iic) => iic.itemCategory.name)
+        categories: itemItemCategories.map((iic) => iic.itemCategory.name),
+        locations: stockItems.map(({stock}) => stock.location).filter(l => l !== null).map(l => ({
+            id: l.id,
+            name: l.name
+        }))
     }));
 
     return {

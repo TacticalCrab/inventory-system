@@ -4,6 +4,11 @@ export interface Property {
     value: string;
 }
 
+export interface Location {
+    id: number;
+    name: string;
+}
+
 export interface Item {
     id: number;
     name: string;
@@ -11,4 +16,5 @@ export interface Item {
     properties?: Property[];
     categories?: string[];
     createdAt?: string | null;
+    locations?: Location[];
 }

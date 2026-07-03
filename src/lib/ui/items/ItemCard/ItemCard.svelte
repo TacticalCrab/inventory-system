@@ -24,6 +24,7 @@
         properties, 
         categories,
         createdAt,
+        locations,
 
         openDescription = true,
         openProperties = false,
@@ -107,6 +108,11 @@
                     </table>
                 </div>
             </details>
+        {/if}
+        {#if locations && locations.length > 0}
+            {#each locations as location (location.id)}
+                <div class="badge badge-secondary badge-sm">{location.name}</div>
+            {/each}
         {/if}
         {#if createdAt}
             <div class="text-xs mt-1">

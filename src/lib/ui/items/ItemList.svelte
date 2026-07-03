@@ -24,6 +24,7 @@
             properties={item.properties}
             categories={item.categories}
             createdAt={item.createdAt}
+            locations={item.locations}
 
             openProperties={true}
 
