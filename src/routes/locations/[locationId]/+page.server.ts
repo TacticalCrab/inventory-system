@@ -1,8 +1,10 @@
 import { db } from '$lib/server/db';
 import { item, location, stockItem, stocks } from '$lib/server/db/schema';
 import { eq, inArray } from 'drizzle-orm';
-import { fail } from '@sveltejs/kit';
+import { fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { updateItem } from '$lib/server/db/queries/item';
+import type { Property } from '$lib/ui/types/Item';
 
 export const load: PageServerLoad = async ({ params }) => {
     const locationsDataRaw = await db.select()
@@ -84,3 +86,46 @@ export const load: PageServerLoad = async ({ params }) => {
         items
     };
 };
+
+export const actions: Actions = {
+    delete: async ({ request }) => {
+        const itemData = await request.formData();
+
+        if (!itemData.get("id")) {
+            return fail(403, {
+                missing: true,
+                message: "No ID provided"
+            });
+        }
+
+        const itemId = parseInt(itemData.get("id") as string);
+
+        await db.delete(item)
+            .where(eq(item.id, itemId));
+    },
+
+    update: async ({request}) => {
+        const itemData = await request.formData();
+
+        if (!itemData.get("id")) {
+            return fail(403, {
+                missing: true,
+                message: "No ID provided"
+            });
+        }
+
+        const itemId = parseInt(itemData.get("id") as string);
+        const name = itemData.get("name") as string;
+        const description = itemData.get("description") as string;
+        const categories = (itemData.get("categories") as string).split(",").filter((c) => c.trim().length > 0);
+        const properties = JSON.parse(itemData.get("properties") as string) as Property[];
+
+        await updateItem({
+            id: itemId,
+            name,
+            description,
+            categories,
+            properties
+        });
+    }
+}
