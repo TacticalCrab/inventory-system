@@ -2,6 +2,7 @@
 	import { resolve } from "$app/paths";
 	import DeleteButton from "$lib/ui/common/buttons/DeleteButton.svelte";
 	import EditButton from "$lib/ui/common/buttons/EditButton.svelte";
+	import RemoveButton from "$lib/ui/common/buttons/RemoveButton.svelte";
 	import type { Item } from "$lib/ui/types/Item";
 
     export interface Property {
@@ -16,6 +17,7 @@
 
         onEditClick?(item: Item): void;
         onDeleteClick?(itemId: Item["id"]): void;
+        onRemoveClick?(itemId: Item["id"]): void;
     }
 
     const {
@@ -30,6 +32,7 @@
         openDescription = true,
         openProperties = false,
         onEditClick,
+        onRemoveClick,
         onDeleteClick
     }: Props = $props();
 
@@ -59,6 +62,10 @@
         } as Item);
     }
 
+    const _onRemoveClick = () => {
+        onRemoveClick?.(id);
+    }
+
     const _onDeleteClick = () => {
         onDeleteClick?.(id);
     }
@@ -70,11 +77,14 @@
         <div class="flex justify-between">
             <div class="card-title">{name}</div>
             <div class="flex gap-2">
-                {#if onEditClick}
-                    <EditButton onclick={_onEditClick} />
-                {/if}
                 {#if onDeleteClick}
                     <DeleteButton onclick={_onDeleteClick} />
+                {/if}
+                {#if onRemoveClick}
+                    <RemoveButton onclick={_onRemoveClick}/>
+                {/if}
+                {#if onEditClick}
+                    <EditButton onclick={_onEditClick} />
                 {/if}
             </div>
         </div>

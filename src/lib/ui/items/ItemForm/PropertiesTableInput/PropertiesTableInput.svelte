@@ -1,5 +1,5 @@
 <script lang="ts">
-	import DeleteButton from "$lib/ui/common/DeleteButton.svelte";
+	import DeleteButton from "$lib/ui/common/buttons/DeleteButton.svelte";
 
     type TableRow = {
         id?: number;

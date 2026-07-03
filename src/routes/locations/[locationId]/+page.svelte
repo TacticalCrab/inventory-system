@@ -3,7 +3,7 @@
 	import ItemList from '$lib/ui/items/ItemList.svelte';
 	import UpdateItemModal from '$lib/ui/items/UpdateItemModal/UpdateItemModal.svelte';
 
-      let { data } = $props();
+    let { data } = $props();
 
     let updateModal: UpdateItemModal;
 
@@ -21,9 +21,28 @@
         });
 
         if (response.ok) {
-            await invalidate("data:items");
+            await invalidate("location:data:items");
         }
     };
+
+    const handleRemoveItemFromLocation = async (itemId: number, locationId: number) => {
+        if (!itemId || !locationId) {
+            return;
+        }
+
+        const formData = new FormData();
+        formData.set("itemId", itemId.toString());
+        formData.set("locationId", locationId.toString());
+
+        const response = await fetch("?/removeItem", {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            await invalidate("location:data:items");
+        }
+    }
 </script>
 
 <div class="flex flex-col items-center mt-4">
@@ -37,6 +56,7 @@
     {#if data.items }
         <ItemList
             items={data.items}
+            onRemoveClick={(itemId) => handleRemoveItemFromLocation(itemId, data.locationData.id)}
             onEditClick={(itemData) => updateModal?.openModal(itemData)}
             onDeleteClick={(itemId) => handleDelete(itemId)}
         />

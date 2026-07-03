@@ -1,12 +1,14 @@
 import { db } from '$lib/server/db';
 import { item, location, stockItem, stocks } from '$lib/server/db/schema';
-import { eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { updateItem } from '$lib/server/db/queries/item';
 import type { Property } from '$lib/ui/types/Item';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, depends }) => {
+    depends("location:data:items")
+    
     const locationsDataRaw = await db.select()
         .from(location)
         .where(eq(location.id, parseInt(params.locationId)));
@@ -127,5 +129,45 @@ export const actions: Actions = {
             categories,
             properties
         });
+    },
+    
+    removeItem: async ({request}) => {
+        const data = await request.formData();
+
+        if (!data.get("itemId") || !data.get("locationId")) {
+            return fail(403);
+        }
+
+        const itemId = parseInt(data.get("itemId") as string);
+        const locationId = parseInt(data.get("locationId") as string);
+
+        let _fail = null
+        await db.transaction(async (tx) => {
+            const _stocks = await tx.select({
+                id: stocks.id
+            })
+                .from(stocks)
+                .where(eq(stocks.locationId, locationId));
+
+            if (_stocks.length < 0) {
+                _fail = fail(404);
+                return;
+            }
+
+            const stock = _stocks[0];
+
+            await tx
+                .delete(stockItem)
+                .where(
+                    and(
+                        eq(stockItem.stockId, stock.id),
+                        eq(stockItem.itemId, itemId)
+                    )
+                )
+        });
+
+        if (_fail) {
+            return _fail;
+        }
     }
 }

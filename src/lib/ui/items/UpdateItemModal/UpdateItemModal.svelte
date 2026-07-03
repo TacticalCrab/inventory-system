@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { page } from "$app/state";
-	import { getToastContext } from "$lib/ui/toaster/toast.svelte";
-	import type { ItemData } from "../ItemCard/ItemCard.svelte";
+    import { page } from "$app/state";
+    import { getToastContext } from "$lib/ui/toaster/toast.svelte";
+	import type { Item } from "$lib/ui/types/Item";
     import ItemForm from "../ItemForm/ItemForm.svelte";
 
     const toastState = getToastContext();
@@ -9,7 +9,7 @@
     let dialog: HTMLDialogElement;
     let form: ItemForm;
 
-    export function openModal(itemData: ItemData) {
+    export function openModal(itemData: Item) {
         form.clear();
         errorMessage = "";
         dialog.showModal();
