@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from "$app/paths";
 	import DeleteButton from "$lib/ui/common/DeleteButton.svelte";
 	import EditButton from "$lib/ui/common/EditButton.svelte";
 	import type { Item } from "$lib/ui/types/Item";
@@ -111,7 +112,11 @@
         {/if}
         {#if locations && locations.length > 0}
             {#each locations as location (location.id)}
-                <div class="badge badge-secondary badge-sm">{location.name}</div>
+                <div class="badge badge-secondary badge-sm">
+                    <a href={resolve(`/locations/${location.id}`)} aria-label={location.name}>
+                        {location.name}
+                    </a>
+                </div>
             {/each}
         {/if}
         {#if createdAt}
