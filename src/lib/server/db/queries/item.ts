@@ -1,6 +1,87 @@
 import {db, type DbTransaction} from "$lib/server/db";
 import { and, eq, inArray, sql } from "drizzle-orm";
-import { itemCategory, itemItemCategory, itemProperty } from "../schema";
+import { item, itemCategory, itemItemCategory, itemProperty } from "../schema";
+import type { Property } from "$lib/ui/types/Item";
+
+interface CreateItemData {
+    name: string;
+    description?: string;
+    categories?: string[];
+    properties?: Property[];
+}
+
+export async function createItem(itemData: CreateItemData) {
+        await db.transaction(async (tx) => {
+        const [newItem] = await tx.insert(item)
+            .values({
+                name: itemData.name,
+                description: itemData.description
+            })
+            .returning({
+                id: item.id
+            });
+
+            if (itemData.categories && itemData.categories.length > 0) {
+                await Promise.all(itemData.categories.map(async (category) => {
+                    if (category.trim().length === 0) {
+                        return;
+                    }
+
+                    category = category.trim();
+
+                    const [newCategory] = await tx.insert(itemCategory)
+                        .values({
+                            name: category
+                        })
+                        .onConflictDoUpdate({
+                            target: itemCategory.name,
+                            set: { name: category }
+                        })
+                        .returning({
+                            id: itemCategory.id
+                        });
+
+                    await tx.insert(itemItemCategory).values({
+                        itemId: newItem.id,
+                        itemCategoryId: newCategory.id,
+                    });
+                }));
+            }
+
+            if (itemData.properties && itemData.properties.length > 0) {
+                await Promise.all(itemData.properties.map((property: Property) => {
+                    return tx.insert(itemProperty).values({
+                        itemId: newItem.id,
+                        name: property.name,
+                        value: property.value,
+                        typeName: "str"
+                    });
+                }))
+            }
+    });
+}
+
+interface UpdateItemData {
+    id: number;
+    name: string;
+    description?: string;
+    categories?: string[];
+    properties?: Property[];
+}
+
+export async function updateItem(itemData: UpdateItemData) {
+    await db.transaction(async (tx) => {
+        await tx.update(item)
+            .set({
+                name: itemData.name,
+                description: itemData.description
+            })
+            .where(eq(item.id, itemData.id));
+
+            await updateItemCategoriesByNames(tx, itemData.id, itemData.categories);
+            await updateItemPropertiesByIds(tx, itemData.id, itemData.properties);
+    });
+}
 
 export async function updateItemCategoriesByNames(tx: DbTransaction, itemId: number, categoryNames?: string[]) {
     if (!categoryNames || categoryNames.length === 0) {
@@ -79,13 +160,14 @@ export async function updateItemCategoriesByNames(tx: DbTransaction, itemId: num
     await Promise.all(promises); 
 }
 
-export interface Property {
-    id?: number;
-    name?: string;
-    value?: string;
-}
+export async function updateItemPropertiesByIds(tx: DbTransaction, itemId: number, properties?: Property[]) {
+    if (!properties || properties.length === 0) {
+        await db.delete(itemProperty)
+            .where(eq(itemProperty.itemId, itemId));
 
-export async function updateItemPropertiesByIds(tx: DbTransaction, itemId: number, properties: Property[]) {
+        return;
+    }
+
     const currentProperties = await tx
     .select({
         id: itemProperty.id
@@ -136,3 +218,4 @@ export async function updateItemPropertiesByIds(tx: DbTransaction, itemId: numbe
         }
     }
 }
+
