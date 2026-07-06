@@ -169,12 +169,12 @@ export async function updateItemPropertiesByIds(tx: DbTransaction, itemId: numbe
     }
 
     const currentProperties = await tx
-    .select({
-        id: itemProperty.id
-    })
-    .from(itemProperty)
-    .where(eq(itemProperty.itemId, itemId));
-    
+        .select({
+            id: itemProperty.id
+        })
+        .from(itemProperty)
+        .where(eq(itemProperty.itemId, itemId));
+
     const currentPropertiesIds = new Set(currentProperties.map((p) => p.id));
     const updatedPropertiesIds = new Set(
         Object.values(properties)
@@ -205,7 +205,12 @@ export async function updateItemPropertiesByIds(tx: DbTransaction, itemId: numbe
                     name: property.name,
                     value: property.value
                 })
-                .where(eq(itemProperty.itemId, itemId));
+                .where(
+                    and(
+                        eq(itemProperty.id, property.id),
+                        eq(itemProperty.itemId, itemId)
+                    )
+                );
         } else if (!property.id) {
             await tx
                 .insert(itemProperty)
