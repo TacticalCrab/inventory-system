@@ -1,6 +1,6 @@
 import { db } from "$lib/server/db";
 import { createItem, updateItem } from "$lib/server/db/queries/item";
-import { item } from "$lib/server/db/schema";
+import { item, stockItem, stocks } from "$lib/server/db/schema";
 import { fail, type Actions } from "@sveltejs/kit";
 import { and, eq, ilike } from "drizzle-orm";
 import type { PageServerLoad } from "./$types";
@@ -132,5 +132,35 @@ export const actions: Actions = {
             categories,
             properties
         });
+    },
+
+    addToLocation: async ({request}) => {
+        const data = await request.formData();
+
+        const itemId = parseInt(data.get("itemId") as string);
+        const locationId = parseInt(data.get("locationId") as string);
+        const quantity = parseFloat(data.get("quantity") as string);
+
+        const locationStockRow = await db
+            .select({
+                id: stocks.id
+            })
+            .from(stocks)
+            .where(eq(stocks.locationId, locationId));
+        
+        if (locationStockRow.length === 0) {
+            return fail(404);
+        }
+
+        const locationStock = locationStockRow[0];
+
+        await db
+            .insert(stockItem)
+            .values({
+                stockId: locationStock.id,
+                itemId,
+                quantity: quantity,
+                unit: "q"
+            });
     }
 }

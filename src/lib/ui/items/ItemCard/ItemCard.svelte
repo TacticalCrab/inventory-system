@@ -2,6 +2,7 @@
 	import { resolve } from "$app/paths";
 	import DeleteButton from "$lib/ui/common/buttons/DeleteButton.svelte";
 	import EditButton from "$lib/ui/common/buttons/EditButton.svelte";
+	import LocationButton from "$lib/ui/common/buttons/LocationButton.svelte";
 	import RemoveButton from "$lib/ui/common/buttons/RemoveButton.svelte";
 	import type { Item } from "$lib/ui/types/Item";
 
@@ -18,6 +19,7 @@
         onEditClick?(item: Item): void;
         onDeleteClick?(itemId: Item["id"]): void;
         onRemoveClick?(itemId: Item["id"]): void;
+        onLocationClick?(itemId: Item["id"]): void;
     }
 
     const {
@@ -33,7 +35,8 @@
         openProperties = false,
         onEditClick,
         onRemoveClick,
-        onDeleteClick
+        onDeleteClick,
+        onLocationClick
     }: Props = $props();
 
     let formattedDate = $derived.by(() => {
@@ -62,6 +65,10 @@
         } as Item);
     }
 
+    const _onLocationClick = () => {
+        onLocationClick?.(id);
+    }
+
     const _onRemoveClick = () => {
         onRemoveClick?.(id);
     }
@@ -85,6 +92,9 @@
                 {/if}
                 {#if onEditClick}
                     <EditButton onclick={_onEditClick} />
+                {/if}
+                {#if onLocationClick}
+                    <LocationButton onclick={_onLocationClick}/>
                 {/if}
             </div>
         </div>
@@ -121,13 +131,15 @@
             </details>
         {/if}
         {#if locations && locations.length > 0}
-            {#each locations as location (location.id)}
-                <div class="badge badge-secondary badge-sm">
-                    <a href={resolve(`/locations/${location.id}`)} aria-label={location.name}>
-                        {location.name}
-                    </a>
-                </div>
-            {/each}
+            <div class="flex gap-2">
+                {#each locations as location (location.id)}
+                    <div class="badge badge-secondary badge-sm">
+                        <a href={resolve(`/locations/${location.id}`)} aria-label={location.name}>
+                            {location.name}
+                        </a>
+                    </div>
+                {/each}
+            </div>
         {/if}
         {#if createdAt}
             <div class="text-xs mt-1">

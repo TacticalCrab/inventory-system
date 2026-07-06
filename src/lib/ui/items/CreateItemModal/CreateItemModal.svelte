@@ -37,7 +37,7 @@
       onsuccess={() => {
         if (dialog) {
           dialog.close();
-          toastState.success("Item Updated!");
+          toastState.success("Item Created!");
         }
       }}/>
   </div>

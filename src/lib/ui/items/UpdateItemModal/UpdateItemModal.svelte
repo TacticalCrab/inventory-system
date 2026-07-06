@@ -1,7 +1,7 @@
 <script lang="ts">
     import { page } from "$app/state";
     import { getToastContext } from "$lib/ui/toaster/toast.svelte";
-	import type { Item } from "$lib/ui/types/Item";
+    import type { Item } from "$lib/ui/types/Item";
     import ItemForm from "../ItemForm/ItemForm.svelte";
 
     const toastState = getToastContext();

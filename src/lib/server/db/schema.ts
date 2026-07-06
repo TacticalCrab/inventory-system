@@ -113,6 +113,10 @@ export const stockItem = pgTable("stock_item", {
 	quantity: doublePrecision().default(0),
 	unit: varchar(),
 }, (table) => [
+	primaryKey({ 
+        name: "stock_item_pkey", 
+        columns: [table.itemId, table.stockId] 
+    	}),
 	foreignKey({
 			columns: [table.itemId],
 			foreignColumns: [item.id],

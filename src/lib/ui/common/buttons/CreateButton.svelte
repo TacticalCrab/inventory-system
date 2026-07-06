@@ -3,19 +3,21 @@
 
     interface Props {
         type?: HTMLButtonAttributes["type"];
+        title?: string;
         onclick?(): void;
     }
 
     const {
         type = "button",
+        title = "Create",
         onclick
     }: Props = $props();
 </script>
 
 <button 
     type={type}
-    aria-label="Create"
-    title="Create"
+    aria-label={title}
+    title={title}
     onclick={onclick}
     class="btn btn-sm btn-circle text-success hover:bg-success/10">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">

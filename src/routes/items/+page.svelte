@@ -7,6 +7,7 @@
 	import { page } from '$app/state';
 	import type { ResolvedPathname } from '$app/types';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
+	import AddToLocationModal from '$lib/ui/items/AddToLocationModal/AddToLocationModal.svelte';
 
     let { data } = $props();
 
@@ -29,6 +30,7 @@
 	}
 
     let updateModal: UpdateItemModal;
+    let locationModal: AddToLocationModal;
 
     const handleDelete = async (itemId: number) => {
         if (!itemId) {
@@ -59,8 +61,10 @@
 
 <ItemList
     items={data.items}
+    onLocationClick={(itemId) => locationModal?.openModal(itemId)}
     onEditClick={(itemData) => updateModal?.openModal(itemData)}
     onDeleteClick={handleDelete}
 />
 
+<AddToLocationModal bind:this={locationModal} />
 <UpdateItemModal bind:this={updateModal}/>

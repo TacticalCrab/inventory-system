@@ -64,7 +64,6 @@
     }
 
     export function setData(data: FormData) {
-        console.log(data);
         id = data.id || null;
         name = data.name || "";
         description = data.description || "";
@@ -92,7 +91,7 @@
     }}>
 
     {#if title}
-        <h2>{title}</h2>
+        <h2>{title} #{id}</h2>
     {/if}
 
     {#if errorMessage}
