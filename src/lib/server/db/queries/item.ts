@@ -1,13 +1,76 @@
 import {db, type DbTransaction} from "$lib/server/db";
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, SQL, sql } from "drizzle-orm";
 import { item, itemCategory, itemItemCategory, itemProperty } from "../schema";
 import type { Property } from "$lib/ui/types/Item";
 
 interface CreateItemData {
     name: string;
-    description?: string;
+    description?: string | null;
     categories?: string[];
     properties?: Property[];
+}
+
+export async function getItem(itemId: number) {
+    const itemRow = await getItems([eq(item.id, itemId)])
+    if (itemRow.length === 0) {
+        return null;
+    }
+
+    return itemRow[0];
+}
+
+export async function getItems(conditions: SQL<unknown>[] = []) {
+    const rawItems = await db.query.item.findMany({
+        columns: {
+            id: true,
+            name: true,
+            description: true,
+            createdAt: true,
+            location: true
+        },
+        where: conditions.length > 0 ? and(...conditions) : undefined,
+        orderBy: (item, {desc}) => desc(item.createdAt),
+        with: {
+            itemProperties: {
+                columns: {
+                    id: true,
+                    name: true,
+                    value: true
+                }
+            },
+            itemItemCategories: {
+                with: {
+                    itemCategory: true
+                }
+            },
+            stockItems: {
+                with: {
+                    stock: {
+                        with: {
+                            location: {
+                                columns: {
+                                    id: true,
+                                    name: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    return rawItems.map(({ itemProperties, itemItemCategories, stockItems, ...item }) => ({
+        ...item,
+        properties: [
+            ...itemProperties
+        ],
+        categories: itemItemCategories.map((iic) => iic.itemCategory.name),
+        locations: stockItems.map(({stock}) => stock.location).filter(l => l !== null).map(l => ({
+            id: l.id,
+            name: l.name
+        }))
+    }));
 }
 
 export async function createItem(itemData: CreateItemData) {

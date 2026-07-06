@@ -49,6 +49,24 @@
             await invalidate("data:items");
         }
     };
+
+    const handleCopy = async (itemId: number) => {
+        if (!itemId) {
+            return;
+        }
+
+        const formData = new FormData();
+        formData.set('id', itemId.toString());
+
+        const response = await fetch("?/copy", {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            await invalidate("data:items");
+        }
+    }
 </script>
 
 <div class="p-4 flex gap-4 items-center">
@@ -64,6 +82,7 @@
     onLocationClick={(itemId) => locationModal?.openModal(itemId)}
     onEditClick={(itemData) => updateModal?.openModal(itemData)}
     onDeleteClick={handleDelete}
+    onCopyClick={handleCopy}
 />
 
 <AddToLocationModal bind:this={locationModal} />

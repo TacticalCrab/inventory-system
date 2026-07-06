@@ -1,8 +1,8 @@
 import { db } from "$lib/server/db";
-import { createItem, updateItem } from "$lib/server/db/queries/item";
+import { createItem, getItem, getItems, updateItem } from "$lib/server/db/queries/item";
 import { item, stockItem, stocks } from "$lib/server/db/schema";
 import { fail, type Actions } from "@sveltejs/kit";
-import { and, eq, ilike } from "drizzle-orm";
+import { eq, ilike } from "drizzle-orm";
 import type { PageServerLoad } from "./$types";
 import type { Property } from "$lib/ui/types/Item";
 
@@ -13,57 +13,7 @@ export const load: PageServerLoad = async ({depends, url}) => {
     const searchQuery = url.searchParams.getAll('q') || '';
     const conditions = searchQuery.map(word => ilike(item.name, `%${word}%`));
 
-    const rawItems = await db.query.item.findMany({
-        columns: {
-            id: true,
-            name: true,
-            description: true,
-            createdAt: true,
-            location: true
-        },
-        where: conditions.length > 0 ? and(...conditions) : undefined,
-        orderBy: (item, {desc}) => desc(item.createdAt),
-        with: {
-            itemProperties: {
-                columns: {
-                    id: true,
-                    name: true,
-                    value: true
-                }
-            },
-            itemItemCategories: {
-                with: {
-                    itemCategory: true
-                }
-            },
-            stockItems: {
-                with: {
-                    stock: {
-                        with: {
-                            location: {
-                                columns: {
-                                    id: true,
-                                    name: true
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    });
-
-    const items = rawItems.map(({ itemProperties, itemItemCategories, stockItems, ...item }) => ({
-        ...item,
-        properties: [
-            ...itemProperties
-        ],
-        categories: itemItemCategories.map((iic) => iic.itemCategory.name),
-        locations: stockItems.map(({stock}) => stock.location).filter(l => l !== null).map(l => ({
-            id: l.id,
-            name: l.name
-        }))
-    }));
+    const items = await getItems(conditions);
 
     return {
         items
@@ -91,6 +41,23 @@ export const actions: Actions = {
             categories,
             properties
         })
+    },
+
+    copy: async ({request}) => {
+        const data = await request.formData();
+        const itemId = parseInt(data.get("id") as string);
+
+        const item = await getItem(itemId);
+        if (!item) {
+            return fail(404);
+        }
+
+        await createItem({
+            name: item.name,
+            description: item.description,
+            categories: item.categories,
+            properties: item.properties,
+        });
     },
 
     delete: async ({ request }) => {

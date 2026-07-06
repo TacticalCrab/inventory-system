@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from "$app/paths";
+	import CopyButton from "$lib/ui/common/buttons/CopyButton.svelte";
 	import DeleteButton from "$lib/ui/common/buttons/DeleteButton.svelte";
 	import EditButton from "$lib/ui/common/buttons/EditButton.svelte";
 	import LocationButton from "$lib/ui/common/buttons/LocationButton.svelte";
@@ -20,6 +21,7 @@
         onDeleteClick?(itemId: Item["id"]): void;
         onRemoveClick?(itemId: Item["id"]): void;
         onLocationClick?(itemId: Item["id"]): void;
+        onCopyClick?(item: Item["id"]): void;
     }
 
     const {
@@ -36,7 +38,8 @@
         onEditClick,
         onRemoveClick,
         onDeleteClick,
-        onLocationClick
+        onLocationClick,
+        onCopyClick
     }: Props = $props();
 
     let formattedDate = $derived.by(() => {
@@ -76,6 +79,10 @@
     const _onDeleteClick = () => {
         onDeleteClick?.(id);
     }
+
+    const _onCopyClick = () => {
+        onCopyClick?.(id);
+    }
     
 </script>
 
@@ -92,6 +99,9 @@
                 {/if}
                 {#if onEditClick}
                     <EditButton onclick={_onEditClick} />
+                {/if}
+                {#if onCopyClick}
+                    <CopyButton onclick={_onCopyClick}/>
                 {/if}
                 {#if onLocationClick}
                     <LocationButton onclick={_onLocationClick}/>

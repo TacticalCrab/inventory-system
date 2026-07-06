@@ -8,6 +8,7 @@
         onDeleteClick?(itemId: Item["id"]): void;
         onRemoveClick?(itemId: Item["id"]): void;
         onLocationClick?(itemId: Item["id"]): void;
+        onCopyClick?(itemId: Item["id"]): void;
     }
 
     let { 
@@ -15,7 +16,8 @@
         onEditClick,
         onDeleteClick,
         onRemoveClick,
-        onLocationClick
+        onLocationClick,
+        onCopyClick
     }: Props = $props();
 </script>
 
@@ -36,6 +38,7 @@
             onDeleteClick={onDeleteClick}
             onRemoveClick={onRemoveClick}
             onLocationClick={onLocationClick}
+            onCopyClick={onCopyClick}
         />
     {/each}
 </div>
