@@ -1,17 +1,21 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import LocationCard from '$lib/ui/locations/LocationCard.svelte';
 
     let { data } = $props();
 </script>
 
 <div class="p-4">
-    <h1>Locations</h1>
-    {#each data.locations as location (location.id)}
-        <a href={resolve(`/locations/${location.id}`)}>
-            <div class="border p-2 w-fit">
-                <div>{location.name}</div>
-                <div>{location.description}</div>
-            </div>
-        </a>
-    {/each}
+    <div class="grid sm:grid-cols-3 md:grid-cols-4 justify-items-center gap-4 p-4">
+        {#each data.locations as location (location.id)}
+            <a class="w-full" href={resolve(`/locations/${location.id}`)}>
+                <LocationCard
+                    id={location.id}
+                    name={location.name}
+                    description={location.description}
+                    itemsCount={location.itemCount}
+                />
+            </a>
+        {/each}
+    </div>
 </div>
