@@ -9,7 +9,12 @@
         onRemoveClick?(itemId: Item["id"]): void;
         onLocationClick?(itemId: Item["id"]): void;
         onCopyClick?(itemId: Item["id"]): void;
-        onChangeValueClick?(itemId: Item["id"]): void;
+        onChangeValueClick?(itemId: {
+            id: LocationItem["id"],
+            quantity: LocationItem["quantity"],
+            unit: LocationItem["unit"],
+            name: string
+        }): void;
     }
 
     let { 
@@ -58,7 +63,12 @@
             onRemoveClick={onRemoveClick}
             onLocationClick={onLocationClick}
             onCopyClick={onCopyClick}
-            onChangeValueClick={onChangeValueClick}
+            onChangeValueClick={(itemId) => onChangeValueClick?.({
+                id: itemId,
+                name: item.name,
+                quantity: item.quantity,
+                unit: item.unit
+            })}
         />
     {/each}
 </div>

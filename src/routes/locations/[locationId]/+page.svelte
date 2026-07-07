@@ -2,10 +2,12 @@
 	import { invalidate } from '$app/navigation';
 	import LocationItemList from '$lib/ui/items/LocationItemList.svelte';
 	import UpdateItemModal from '$lib/ui/items/UpdateItemModal/UpdateItemModal.svelte';
+	import UpdateQuantityModal from '$lib/ui/items/UpdateQuantityModal/UpdateQuantityModal.svelte';
 
     let { data } = $props();
 
     let updateModal: UpdateItemModal;
+    let updateQuantityModal: UpdateQuantityModal;
 
     const handleDelete = async (itemId: number) => {
         if (!itemId) {
@@ -59,8 +61,10 @@
             onRemoveClick={(itemId) => handleRemoveItemFromLocation(itemId, data.locationData.id)}
             onEditClick={(itemData) => updateModal?.openModal(itemData)}
             onDeleteClick={(itemId) => handleDelete(itemId)}
+            onChangeValueClick={(itemData) => updateQuantityModal?.openModal(data.locationData.id, itemData)}
         />
     {/if}
 </div>
 
 <UpdateItemModal bind:this={updateModal}/>
+<UpdateQuantityModal bind:this={updateQuantityModal}/>

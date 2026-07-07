@@ -180,5 +180,37 @@ export const actions: Actions = {
         if (_fail) {
             return _fail;
         }
+    },
+
+    updateItemQuantity: async ({request}) => {
+        const data = await request.formData();
+
+        const itemId = parseInt(data.get("itemId") as string);
+        const locationId = parseInt(data.get("locationId") as string);
+        const quantity = parseInt(data.get("quantity") as string);
+        const unit = data.get("unit") as string;
+
+        const stockRow = await db.select()
+            .from(stocks)
+            .where(eq(stocks.locationId, locationId));
+
+        if (stockRow.length === 0) {
+            return fail(404, {
+                message: `Item not at this location id (${locationId})`
+            });
+        }
+
+        const stock = stockRow[0];
+        await db.update(stockItem)
+            .set({
+                quantity,
+                unit
+            })
+            .where(
+                and(
+                    eq(stockItem.itemId, itemId),
+                    eq(stockItem.stockId, stock.id),
+                )
+            )
     }
 }
