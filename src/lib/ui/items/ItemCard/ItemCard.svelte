@@ -6,6 +6,7 @@
 	import LocationButton from "$lib/ui/common/buttons/LocationButton.svelte";
 	import RemoveButton from "$lib/ui/common/buttons/RemoveButton.svelte";
 	import type { Item } from "$lib/ui/types/Item";
+	import type { Snippet } from "svelte";
 
     export interface Property {
         id?: number;
@@ -14,6 +15,8 @@
     }
 
     interface Props extends Item {
+        children?: Snippet;
+
         openDescription?: boolean;
         openProperties?: boolean;
 
@@ -25,6 +28,8 @@
     }
 
     const {
+        children,
+
         id,
         name, 
         description, 
@@ -154,6 +159,9 @@
                     </div>
                 {/each}
             </div>
+        {/if}
+        {#if children}
+            {@render children()}
         {/if}
         {#if createdAt}
             <div class="text-xs mt-1">

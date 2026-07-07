@@ -37,29 +37,38 @@ export const load: PageServerLoad = async ({ params, depends }) => {
     }
 
     const locationStock = locationStocks[0];
-    const locationStockItemsRawIds = await db.select({
-        itemId: stockItem.itemId
+    const locationStockItemsRows = await db.select({
+        itemId: stockItem.itemId,
+        quantity: stockItem.quantity,
+        unit: stockItem.unit
     })
         .from(stockItem)
         .where(eq(stockItem.stockId, locationStock.id));
 
     // No Items
-    if (locationStockItemsRawIds.length === 0) {
+    if (locationStockItemsRows.length === 0) {
         return { locationData }
     }
 
-    const locationStockItemsIds = locationStockItemsRawIds.map((l) => l.itemId);
+    const locationStockItemsIds = locationStockItemsRows.map((l) => l.itemId);
 
     const rawItems = await db.query.item.findMany({
         columns: {
             id: true,
             name: true,
             description: true,
-            createdAt: true
+            createdAt: true,
         },
         where: inArray(item.id, locationStockItemsIds),
         orderBy: (item, {desc}) => desc(item.createdAt),
         with: {
+            stockItems: {
+                columns: {
+                    quantity: true,
+                    unit: true
+                }
+            },
+
             itemProperties: {
                 columns: {
                     id: true,
@@ -75,12 +84,14 @@ export const load: PageServerLoad = async ({ params, depends }) => {
         }
     })
 
-    const items = rawItems.map(({ itemProperties, itemItemCategories, ...item }) => ({
+    const items = rawItems.map(({ itemProperties, itemItemCategories, stockItems, ...item }) => ({
         ...item,
         properties: [
             ...itemProperties
         ],
-        categories: itemItemCategories.map((iic) => iic.itemCategory.name)
+        categories: itemItemCategories.map((iic) => iic.itemCategory.name),
+        quantity: stockItems?.[0].quantity,
+        unit: stockItems?.[0].unit
     }));
 
     return {

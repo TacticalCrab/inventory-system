@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { invalidate } from '$app/navigation';
-	import ItemList from '$lib/ui/items/ItemList.svelte';
+	import LocationItemList from '$lib/ui/items/LocationItemList.svelte';
 	import UpdateItemModal from '$lib/ui/items/UpdateItemModal/UpdateItemModal.svelte';
 
     let { data } = $props();
@@ -54,7 +54,7 @@
 
 <div class="mt-4">
     {#if data.items }
-        <ItemList
+        <LocationItemList
             items={data.items}
             onRemoveClick={(itemId) => handleRemoveItemFromLocation(itemId, data.locationData.id)}
             onEditClick={(itemData) => updateModal?.openModal(itemData)}

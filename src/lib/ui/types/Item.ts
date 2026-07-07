@@ -18,3 +18,8 @@ export interface Item {
     createdAt?: string | null;
     locations?: Location[];
 }
+
+export interface LocationItem extends Item {
+    quantity?: number | null;
+    unit?: string | null;
+}
