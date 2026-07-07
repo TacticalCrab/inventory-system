@@ -66,7 +66,8 @@ export const load: PageServerLoad = async ({ params, depends }) => {
                 columns: {
                     quantity: true,
                     unit: true
-                }
+                },
+                where: eq(stockItem.stockId, locationStock.id)
             },
 
             itemProperties: {
