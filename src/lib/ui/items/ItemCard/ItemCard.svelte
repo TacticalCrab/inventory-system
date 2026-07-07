@@ -20,6 +20,8 @@
 
         openDescription?: boolean;
         openProperties?: boolean;
+        quantity?: number | null;
+        unit?: string | null;
 
         onEditClick?(item: Item): void;
         onDeleteClick?(itemId: Item["id"]): void;
@@ -39,6 +41,9 @@
         categories,
         createdAt,
         locations,
+
+        quantity,
+        unit,
 
         openDescription = true,
         openProperties = false,
@@ -101,7 +106,15 @@
 <div class="card bg-base-200 w-full shadow-sm">
     <div class="card-body">
         <div class="flex justify-between">
-            <div class="card-title">{name}</div>
+            <div class="card-title">
+                {name}
+
+                {#if quantity}
+                    <div class="badge badge-md badge-outline badge-info">
+                        {quantity} {#if unit} {unit} {/if}
+                    </div>
+                {/if}
+            </div>
             <div class="flex gap-2">
                 {#if onDeleteClick}
                     <DeleteButton onclick={_onDeleteClick} />

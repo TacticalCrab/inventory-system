@@ -27,26 +27,10 @@
         onChangeValueClick
     }: Props = $props();
 
-    const itemsUpdated = $derived.by(() => items.map((item) => {
-        let name = item.name;
-        if (item.quantity) {
-            if (item.unit) {
-                name += ` ( ${item.quantity}${item.unit} )`
-            } else {
-                name += ` ( x${item.quantity} )`
-            }
-        }
-
-        return {
-            ...item,
-            name
-        }
-    }))
-
 </script>
 
 <div class="grid md:grid-cols-2 xl:grid-cols-3 justify-items-center gap-4 p-4">
-    {#each itemsUpdated as item (item.id)}
+    {#each items as item (item.id)}
         <ItemCard
             id={item.id}
             name={item.name}
@@ -55,6 +39,9 @@
             categories={item.categories}
             createdAt={item.createdAt}
             locations={item.locations}
+
+            quantity={item.quantity}
+            unit={item.unit}
 
             openProperties={true}
 
