@@ -107,6 +107,7 @@ export const actions: Actions = {
         const itemId = parseInt(data.get("itemId") as string);
         const locationId = parseInt(data.get("locationId") as string);
         const quantity = parseFloat(data.get("quantity") as string);
+        const unit = data.get("unit") as string;
 
         const locationStockRow = await db
             .select({
@@ -127,7 +128,7 @@ export const actions: Actions = {
                 stockId: locationStock.id,
                 itemId,
                 quantity: quantity,
-                unit: "q"
+                unit
             });
     }
 }

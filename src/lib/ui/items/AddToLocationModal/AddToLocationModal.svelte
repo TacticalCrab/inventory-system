@@ -1,5 +1,6 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
+	import { QUANITYT_UNITS } from '$lib/const';
 
     interface Location {
         id: number;
@@ -56,7 +57,18 @@
             </select>
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Quantity</legend>
-                <input name="quantity" type="number" class="input" placeholder="Type here" defaultValue={1} />
+                <div class="flex">
+                    <input class="input w-30" name="quantity" type="number" placeholder="Type here" defaultValue={1} />
+                    <select class="select w-20" name="unit">
+                        {#each QUANITYT_UNITS as unit, i (i)}
+                            {#if unit === ""}
+                                <option selected value="">None</option>
+                            {:else}
+                                <option value={unit}>{unit}</option>
+                            {/if}
+                        {/each}
+                    </select>
+                </div>
             </fieldset>
             <button type="submit" class="btn btn-success mt-4 w-full">Save</button>
         </div>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from "$app/paths";
+	import ChangeValueButton from "$lib/ui/common/buttons/ChangeValueButton.svelte";
 	import CopyButton from "$lib/ui/common/buttons/CopyButton.svelte";
 	import DeleteButton from "$lib/ui/common/buttons/DeleteButton.svelte";
 	import EditButton from "$lib/ui/common/buttons/EditButton.svelte";
@@ -25,6 +26,7 @@
         onRemoveClick?(itemId: Item["id"]): void;
         onLocationClick?(itemId: Item["id"]): void;
         onCopyClick?(item: Item["id"]): void;
+        onChangeValueClick?(itemId: Item["id"]): void;
     }
 
     const {
@@ -44,7 +46,8 @@
         onRemoveClick,
         onDeleteClick,
         onLocationClick,
-        onCopyClick
+        onCopyClick,
+        onChangeValueClick
     }: Props = $props();
 
     let formattedDate = $derived.by(() => {
@@ -88,7 +91,11 @@
     const _onCopyClick = () => {
         onCopyClick?.(id);
     }
-    
+
+    const _onChangeValueClick = () => {
+        onChangeValueClick?.(id);
+    }
+
 </script>
 
 <div class="card bg-base-200 w-full shadow-sm">
@@ -110,6 +117,9 @@
                 {/if}
                 {#if onLocationClick}
                     <LocationButton onclick={_onLocationClick}/>
+                {/if}
+                {#if onChangeValueClick}
+                    <ChangeValueButton onclick={_onChangeValueClick}/>
                 {/if}
             </div>
         </div>

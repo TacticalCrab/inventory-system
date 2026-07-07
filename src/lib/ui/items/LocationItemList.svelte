@@ -9,6 +9,7 @@
         onRemoveClick?(itemId: Item["id"]): void;
         onLocationClick?(itemId: Item["id"]): void;
         onCopyClick?(itemId: Item["id"]): void;
+        onChangeValueClick?(itemId: Item["id"]): void;
     }
 
     let { 
@@ -17,7 +18,8 @@
         onDeleteClick,
         onRemoveClick,
         onLocationClick,
-        onCopyClick
+        onCopyClick,
+        onChangeValueClick
     }: Props = $props();
 
     const itemsUpdated = $derived.by(() => items.map((item) => {
@@ -56,6 +58,7 @@
             onRemoveClick={onRemoveClick}
             onLocationClick={onLocationClick}
             onCopyClick={onCopyClick}
+            onChangeValueClick={onChangeValueClick}
         />
     {/each}
 </div>
