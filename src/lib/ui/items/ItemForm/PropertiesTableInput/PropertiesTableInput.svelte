@@ -39,10 +39,11 @@
     <div class="overflow-x-auto">
         <fieldset class="fieldset">
             <legend class="fieldset-legend">Properties</legend>
-            <table class="table table-xs table-zebra">
+            <table class="table table-xs table-fixed table-zebra whitespace-normal wrap-break-word [word-break:break-word]">
                 <thead>
                     <tr>
-                        <th>
+                        <th class="w-20">
+                            Order
                         </th>
                         <th>
                             Name
@@ -62,8 +63,14 @@
                                 {i + 1}.
                             </td>
                             {#if !readonly}
-                                <td contenteditable="true" bind:innerText={tableRow.name}></td>
-                                <td bind:innerText={tableRow.value} contenteditable="true" ></td>
+                                <td
+                                    class="align-top"
+                                    contenteditable="true" 
+                                    bind:innerText={tableRow.name}></td>
+                                <td
+                                    class="align-top"
+                                    contenteditable="true"
+                                    bind:innerText={tableRow.value}></td>
                             {:else}
                                 <td>{tableRow.name}</td>
                                 <td>{tableRow.value}</td>

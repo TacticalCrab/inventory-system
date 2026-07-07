@@ -127,12 +127,16 @@
             <details class="collapse collapse-arrow bg-base-100 border border-base-300" open={openProperties}>
                 <summary class="collapse-title font-semibold">Properties</summary>
                 <div class="collapse-content overflow-x-auto">
-                    <table class="table table-xs">
+                    <table class="table table-xs table-fixed whitespace-normal wrap-break-word [word-break:break-word]">
                         <tbody>
                             {#each properties as prop (prop.id)}
                                 <tr>
-                                    <td>{prop.name}</td>
-                                    <td>{prop.value}</td>
+                                    <td class="align-top">
+                                        {prop.name}
+                                    </td>
+                                    <td class="align-top">
+                                        {prop.value}
+                                    </td>
                                 </tr>
                             {/each}
                         </tbody>
