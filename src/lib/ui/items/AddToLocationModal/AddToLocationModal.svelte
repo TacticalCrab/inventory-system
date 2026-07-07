@@ -56,7 +56,7 @@
             </select>
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Quantity</legend>
-                <input name="quantity" type="number" class="input" placeholder="Type here" />
+                <input name="quantity" type="number" class="input" placeholder="Type here" defaultValue={1} />
             </fieldset>
             <button type="submit" class="btn btn-success mt-4 w-full">Save</button>
         </div>
