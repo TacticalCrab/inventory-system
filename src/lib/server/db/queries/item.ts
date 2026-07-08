@@ -24,6 +24,7 @@ export async function getItems(conditions: SQL<unknown>[] = []) {
         columns: {
             id: true,
             name: true,
+            barcode: true,
             description: true,
             createdAt: true,
             location: true
@@ -69,7 +70,7 @@ export async function getItems(conditions: SQL<unknown>[] = []) {
         locations: stockItems.map(({stock}) => stock.location).filter(l => l !== null).map(l => ({
             id: l.id,
             name: l.name
-        }))
+        })),
     }));
 }
 
@@ -127,6 +128,7 @@ export async function createItem(itemData: CreateItemData) {
 interface UpdateItemData {
     id: number;
     name: string;
+    barcode: string;
     description?: string;
     categories?: string[];
     properties?: Property[];
@@ -137,7 +139,8 @@ export async function updateItem(itemData: UpdateItemData) {
         await tx.update(item)
             .set({
                 name: itemData.name,
-                description: itemData.description
+                description: itemData.description,
+                barcode: itemData.barcode
             })
             .where(eq(item.id, itemData.id));
 
@@ -286,4 +289,3 @@ export async function updateItemPropertiesByIds(tx: DbTransaction, itemId: numbe
         }
     }
 }
-

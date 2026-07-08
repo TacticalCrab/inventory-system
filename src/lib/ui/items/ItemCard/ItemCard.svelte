@@ -35,7 +35,8 @@
         children,
 
         id,
-        name, 
+        name,
+        barcode,
         description, 
         properties, 
         categories,
@@ -181,6 +182,11 @@
                         </a>
                     </div>
                 {/each}
+            </div>
+        {/if}
+        {#if barcode}
+            <div>
+                Barcode: {barcode}
             </div>
         {/if}
         {#if children}

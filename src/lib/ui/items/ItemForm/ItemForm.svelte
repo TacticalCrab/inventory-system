@@ -4,6 +4,7 @@
     import CategoryPicker from "./CategoryPicker/CategoryPicker.svelte";
     import PropertiesTableInput from './PropertiesTableInput/PropertiesTableInput.svelte';
 	import type { Property } from '../ItemCard/ItemCard.svelte';
+	import BarcodeInput from '$lib/ui/barcode/BarcodeInput.svelte';
 
     interface ItemFormProps {
         title?: string;
@@ -35,6 +36,7 @@
     let description = $state("");
     let categories: string[] = $state([]);
     let properties: Property[] = $state([]);
+    let barcode: string = $state('');
 
     const onSearch = async (searchTerm: string) => {
         if (searchTerm.length < 2) return [];
@@ -51,6 +53,7 @@
     export function clear() {
         name = "";
         description = "";
+        barcode = "";
         categoryPicker.clear();
         propertiesTableInput.clear();
     }
@@ -58,6 +61,7 @@
     interface FormData {
         id?: number | null;
         name?: string | null;
+        barcode?: string | null;
         description?: string | null;
         categories?: string[] | null;
         properties?: Property[] | null;
@@ -66,6 +70,7 @@
     export function setData(data: FormData) {
         id = data.id || null;
         name = data.name || "";
+        barcode = data.barcode || "";
         description = data.description || "";
         categories = data.categories || [];
         properties = data.properties || [];
@@ -123,6 +128,11 @@
             {readonly}
             debounceSeconds={500}
             onSearch={onSearch}/>
+    </div>
+    <div class="mt-4">
+        <BarcodeInput 
+            bind:value={barcode}
+            name="barcode"/>
     </div>
 
     {#if !readonly}

@@ -87,6 +87,7 @@ export const item = pgTable("item", {
 	description: text(),
 	imageUrl: varchar("image_url"),
 	variantId: integer("variant_id"),
+	barcode: varchar(),
 	createdAt: timestamp("created_at", { mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	foreignKey({

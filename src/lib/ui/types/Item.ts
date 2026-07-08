@@ -12,6 +12,7 @@ export interface Location {
 export interface Item {
     id: number;
     name: string;
+    barcode?: string | null;
     description?: string | null;
     properties?: Property[];
     categories?: string[];
