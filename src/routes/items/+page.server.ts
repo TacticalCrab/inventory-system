@@ -40,7 +40,7 @@ export const actions: Actions = {
             description,
             categories,
             properties
-        })
+        });
     },
 
     copy: async ({request}) => {

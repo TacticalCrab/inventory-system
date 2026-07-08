@@ -1,14 +1,17 @@
 import { db } from '$lib/server/db';
 import { item, location, stockItem, stocks } from '$lib/server/db/schema';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq, ilike, inArray } from 'drizzle-orm';
 import { fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { updateItem } from '$lib/server/db/queries/item';
 import type { Property } from '$lib/ui/types/Item';
 
-export const load: PageServerLoad = async ({ params, depends }) => {
+export const load: PageServerLoad = async ({ params, depends, url }) => {
     depends("location:data:items")
-    
+
+    const searchQuery = url.searchParams.getAll('q') || '';
+    const conditions = searchQuery.map(word => ilike(item.name, `%${word}%`));
+
     const locationsDataRaw = await db.select()
         .from(location)
         .where(eq(location.id, parseInt(params.locationId)));
@@ -59,7 +62,10 @@ export const load: PageServerLoad = async ({ params, depends }) => {
             description: true,
             createdAt: true,
         },
-        where: inArray(item.id, locationStockItemsIds),
+        where: and(
+            ...conditions,
+            inArray(item.id, locationStockItemsIds)
+        ),
         orderBy: (item, {desc}) => desc(item.createdAt),
         with: {
             stockItems: {

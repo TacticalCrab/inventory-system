@@ -1,8 +1,12 @@
 <script lang="ts">
-	import { invalidate } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
+	import type { ResolvedPathname } from '$app/types';
+	import InputSearch from '$lib/ui/common/InputSearch.svelte';
 	import LocationItemList from '$lib/ui/items/LocationItemList.svelte';
 	import UpdateItemModal from '$lib/ui/items/UpdateItemModal/UpdateItemModal.svelte';
 	import UpdateQuantityModal from '$lib/ui/items/UpdateQuantityModal/UpdateQuantityModal.svelte';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
+    import { page } from "$app/state";
 
     let { data } = $props();
 
@@ -45,13 +49,38 @@
             await invalidate("location:data:items");
         }
     }
+
+    const handleSearch = () => {
+        const params = new SvelteURLSearchParams(page.url.searchParams);
+
+        params.delete("q");
+        if (searchInput) {
+            searchInput.split(" ").filter(w => w.trim().length > 0).forEach((p) => params.append("q", p));
+        }
+
+        const targetUrl = `?${params.toString()}` as ResolvedPathname;
+        goto(targetUrl, {
+            keepFocus: true,
+            noScroll: true,
+            replaceState: true
+        });
+    }
+
+    let searchInput = $state("");
 </script>
 
-<div class="flex flex-col items-center mt-4">
+<div class="flex flex-col items-center mt-2">
     <span class="badge badge-xl text-xl">
         {data.locationData?.name}
     </span>
     <div>{data.locationData?.description}</div>
+</div>
+
+<div class="p-4 flex gap-4 items-center">
+    <InputSearch
+        bind:value={searchInput}
+        onSearchClick={() => handleSearch()}
+    />
 </div>
 
 <div class="mt-4">
