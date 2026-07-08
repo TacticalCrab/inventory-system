@@ -31,12 +31,14 @@ export const actions: Actions = {
             });
         }
         const name = itemData.get("name") as string;
+        const barcode = itemData.get("barcode") as string;
         const description = itemData.get("description") as string;
         const categories = (itemData.get("categories") as string).split(",");
         const properties = JSON.parse(itemData.get("properties") as string) as Property[];
 
         await createItem({
             name,
+            barcode,
             description,
             categories,
             properties

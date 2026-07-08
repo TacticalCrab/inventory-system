@@ -3,13 +3,6 @@ import { and, eq, inArray, SQL, sql } from "drizzle-orm";
 import { item, itemCategory, itemItemCategory, itemProperty } from "../schema";
 import type { Property } from "$lib/ui/types/Item";
 
-interface CreateItemData {
-    name: string;
-    description?: string | null;
-    categories?: string[];
-    properties?: Property[];
-}
-
 export async function getItem(itemId: number) {
     const itemRow = await getItems([eq(item.id, itemId)])
     if (itemRow.length === 0) {
@@ -74,12 +67,21 @@ export async function getItems(conditions: SQL<unknown>[] = []) {
     }));
 }
 
+interface CreateItemData {
+    name: string;
+    barcode?: string;
+    description?: string | null;
+    categories?: string[];
+    properties?: Property[];
+}
+
 export async function createItem(itemData: CreateItemData) {
         await db.transaction(async (tx) => {
         const [newItem] = await tx.insert(item)
             .values({
                 name: itemData.name,
-                description: itemData.description
+                description: itemData.description,
+                barcode: itemData.barcode
             })
             .returning({
                 id: item.id
