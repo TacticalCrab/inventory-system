@@ -15,13 +15,13 @@
 
 <div class="navbar bg-base-100 shadow-sm sticky top-0 z-10">
 	<div class="flex justify-between w-full items-center">
-		<div class="flex items-center">
+		<div class="flex sm:items-center flex-col sm:flex-row">
 			<a 
 				href={resolve("/")}
 				class="btn btn-ghost text-xl">
 				Inventory System
 			</a>
-			<div class="ml-4 flex gap-2">
+			<div class="flex gap-2 ml-4 ">
 				<a href={resolve('/items')} aria-label="items">
 					Items
 				</a>

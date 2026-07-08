@@ -106,17 +106,19 @@
 
 <div class="card bg-base-200 w-full shadow-sm">
     <div class="card-body">
-        <div class="flex justify-between">
-            <div class="card-title">
-                {name}
+        <div class="flex justify-between items-center flex-col md:flex-row">
+            <div class="card-title flex-wrap items-center">
+                <span>
+                    {name}
+                </span>
 
                 {#if quantity}
                     <div class="badge badge-md badge-outline badge-info">
-                        {quantity} {#if unit} {unit} {/if}
+                        {quantity}{#if unit}&nbsp;{unit} {/if}
                     </div>
                 {/if}
             </div>
-            <div class="flex gap-2">
+            <div class="flex gap-2 mt-4 md:mt-0">
                 {#if onDeleteClick}
                     <DeleteButton onclick={_onDeleteClick} />
                 {/if}
