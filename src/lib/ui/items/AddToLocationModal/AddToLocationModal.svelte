@@ -8,13 +8,15 @@
         name: string;
     }
 
+    let forcedLocationId: number | null = $state(null);
     let dialog: Modal;
     let locations: Location[] = $state([]);
 
     let itemData: number = $state(-1)
 
-    export async function openModal(itemId: number) {
+    export async function openModal(itemId: number, locationId: number | null = null) {
         itemData = itemId;
+        forcedLocationId = locationId || null;
 
         const response = await fetch(`/items/locations?exclude_item=${itemId}`);
         locations = await response.json();
@@ -42,11 +44,23 @@
         }}
     >
         <div>
-            <select name="locationId" class="select">
+            <select name="locationId" class="select" disabled={forcedLocationId !== null || locations.length === 0}>
                 {#each locations as location (location.id)}
-                    <option value={location.id}>{location.name}</option>
+                    <option 
+                        selected={forcedLocationId === location.id} 
+                        value={location.id}>
+                            {location.name}
+                    </option>
                 {/each}
+                {#if locations.length === 0}
+                    <option selected>
+                        Every location available is assigned
+                    </option>
+                {/if}
             </select>
+            {#if forcedLocationId !== null}
+                <input class="hidden" name="locationId" value={forcedLocationId}/>
+            {/if}
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Quantity</legend>
                 <div class="flex">
@@ -62,7 +76,7 @@
                     </select>
                 </div>
             </fieldset>
-            <button type="submit" class="btn btn-success mt-4 w-full">Save</button>
+            <button disabled={locations.length === 0} type="submit" class="btn btn-success mt-4 w-full">Save</button>
         </div>
     </form>
 </Modal>

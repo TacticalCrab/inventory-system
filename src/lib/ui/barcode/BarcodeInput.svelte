@@ -3,12 +3,16 @@
 
     interface Props {
         value?: string;
+		isScannerOpen?: boolean;
         name?: string;
     }
 
-	let { value = $bindable(''), name }: Props = $props();
+	let { 
+		value = $bindable(''),
+		isScannerOpen = $bindable(false),
+		name 
+	}: Props = $props();
 
-	let isScannerOpen = $state(false);
 	let tempScanValue = $state('');
 
 	function toggleScanner() {
@@ -32,8 +36,8 @@
 </script>
 
 <div class="barcode-field">
-	<div class="input-container">
-		<input 
+	<div class="input-container flex flex-wrap">
+		<input
 			type="text"
             name={name}
 			bind:value={value} 
@@ -41,7 +45,7 @@
 		/>
 		<button 
 			type="button" 
-			class="scan-trigger" 
+			class="scan-trigger grow" 
 			onclick={toggleScanner} 
 			aria-expanded={isScannerOpen}
 		>

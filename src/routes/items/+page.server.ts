@@ -1,10 +1,11 @@
 import { db } from "$lib/server/db";
 import { createItem, getItem, getItems, updateItem } from "$lib/server/db/queries/item";
-import { item, stockItem, stocks } from "$lib/server/db/schema";
+import { item } from "$lib/server/db/schema";
 import { fail, type Actions } from "@sveltejs/kit";
 import { eq, ilike } from "drizzle-orm";
 import type { PageServerLoad } from "./$types";
 import type { Property } from "$lib/ui/types/Item";
+import { addItemToLocation } from "$lib/server/db/queries/locations";
 
 
 export const load: PageServerLoad = async ({depends, url}) => {
@@ -113,26 +114,15 @@ export const actions: Actions = {
         const quantity = parseFloat(data.get("quantity") as string);
         const unit = data.get("unit") as string;
 
-        const locationStockRow = await db
-            .select({
-                id: stocks.id
-            })
-            .from(stocks)
-            .where(eq(stocks.locationId, locationId));
-        
-        if (locationStockRow.length === 0) {
-            return fail(404);
+        const result = await addItemToLocation({
+            itemId,
+            locationId,
+            quantity,
+            unit
+        });
+
+        if (!result) {
+            return fail(403);
         }
-
-        const locationStock = locationStockRow[0];
-
-        await db
-            .insert(stockItem)
-            .values({
-                stockId: locationStock.id,
-                itemId,
-                quantity: quantity,
-                unit
-            });
     }
 }

@@ -2,10 +2,12 @@
 	import { resolve } from "$app/paths";
 	import ChangeValueButton from "$lib/ui/common/buttons/ChangeValueButton.svelte";
 	import CopyButton from "$lib/ui/common/buttons/CopyButton.svelte";
+	import CreateButton from "$lib/ui/common/buttons/CreateButton.svelte";
 	import DeleteButton from "$lib/ui/common/buttons/DeleteButton.svelte";
 	import EditButton from "$lib/ui/common/buttons/EditButton.svelte";
 	import LocationButton from "$lib/ui/common/buttons/LocationButton.svelte";
 	import RemoveButton from "$lib/ui/common/buttons/RemoveButton.svelte";
+	import Barcode from "$lib/ui/common/icons/Barcode.svelte";
 	import type { Item } from "$lib/ui/types/Item";
 	import type { Snippet } from "svelte";
 
@@ -16,13 +18,18 @@
     }
 
     interface Props extends Item {
-        children?: Snippet;
-
-        openDescription?: boolean;
-        openProperties?: boolean;
         quantity?: number | null;
         unit?: string | null;
 
+        children?: Snippet;
+
+        disabled?: boolean;
+
+        openDescription?: boolean;
+        openProperties?: boolean;
+        enableLinks?: boolean;
+
+        onAddClick?(itemId: Item["id"]): void;
         onEditClick?(item: Item): void;
         onDeleteClick?(itemId: Item["id"]): void;
         onRemoveClick?(itemId: Item["id"]): void;
@@ -46,8 +53,11 @@
         quantity,
         unit,
 
+        disabled = false,
         openDescription = true,
         openProperties = false,
+        enableLinks = true,
+        onAddClick,
         onEditClick,
         onRemoveClick,
         onDeleteClick,
@@ -70,6 +80,10 @@
         }
         return undefined;
     });
+
+    const _onAddClick = () => {
+        onAddClick?.(id);
+    }
 
     const _onEditClick = () => {
         onEditClick?.({
@@ -104,7 +118,10 @@
 
 </script>
 
-<div class="card bg-base-200 w-full shadow-sm">
+<div class={[
+    "card bg-base-200 w-full shadow-sm",
+    disabled && "cursor-not-allowed"
+]}>
     <div class="card-body">
         <div class="flex justify-between items-center flex-col md:flex-row">
             <div class="card-title flex-wrap items-center">
@@ -118,26 +135,31 @@
                     </div>
                 {/if}
             </div>
-            <div class="flex gap-2 mt-4 md:mt-0">
-                {#if onDeleteClick}
-                    <DeleteButton onclick={_onDeleteClick} />
-                {/if}
-                {#if onRemoveClick}
-                    <RemoveButton onclick={_onRemoveClick}/>
-                {/if}
-                {#if onEditClick}
-                    <EditButton onclick={_onEditClick} />
-                {/if}
-                {#if onCopyClick}
-                    <CopyButton onclick={_onCopyClick}/>
-                {/if}
-                {#if onLocationClick}
-                    <LocationButton onclick={_onLocationClick}/>
-                {/if}
-                {#if onChangeValueClick}
-                    <ChangeValueButton onclick={_onChangeValueClick}/>
-                {/if}
-            </div>
+            {#if !disabled}
+                <div class="flex gap-2 mt-4 md:mt-0">
+                    {#if onDeleteClick}
+                        <DeleteButton onclick={_onDeleteClick} />
+                    {/if}
+                    {#if onRemoveClick}
+                        <RemoveButton onclick={_onRemoveClick}/>
+                    {/if}
+                    {#if onEditClick}
+                        <EditButton onclick={_onEditClick} />
+                    {/if}
+                    {#if onCopyClick}
+                        <CopyButton onclick={_onCopyClick}/>
+                    {/if}
+                    {#if onLocationClick}
+                        <LocationButton onclick={_onLocationClick}/>
+                    {/if}
+                    {#if onChangeValueClick}
+                        <ChangeValueButton onclick={_onChangeValueClick}/>
+                    {/if}
+                    {#if onAddClick}
+                        <CreateButton onclick={_onAddClick}/>
+                    {/if}
+                </div>
+            {/if}
         </div>
         {#if categories && categories.length > 0}
             <div class="flex gap-1 flex-wrap">
@@ -179,7 +201,7 @@
             <div class="flex gap-2">
                 {#each locations as location (location.id)}
                     <div class="badge badge-secondary badge-sm">
-                        <a href={resolve(`/locations/${location.id}`)} aria-label={location.name}>
+                        <a href={enableLinks ? resolve(`/locations/${location.id}`) : undefined} aria-label={location.name}>
                             {location.name}
                         </a>
                     </div>
@@ -187,8 +209,8 @@
             </div>
         {/if}
         {#if barcode}
-            <div>
-                Barcode: {barcode}
+            <div class="flex items-center mt-2">
+                <Barcode/>&nbsp;{barcode}
             </div>
         {/if}
         {#if children}

@@ -5,6 +5,7 @@ import { fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { updateItem } from '$lib/server/db/queries/item';
 import type { Property } from '$lib/ui/types/Item';
+import { addItemToLocation } from '$lib/server/db/queries/locations';
 
 export const load: PageServerLoad = async ({ params, depends, url }) => {
     depends("location:data:items")
@@ -222,5 +223,25 @@ export const actions: Actions = {
                     eq(stockItem.stockId, stock.id),
                 )
             )
+    },
+
+    addToLocation: async ({request}) => {
+        const data = await request.formData();
+
+        const itemId = parseInt(data.get("itemId") as string);
+        const locationId = parseInt(data.get("locationId") as string);
+        const quantity = parseFloat(data.get("quantity") as string);
+        const unit = data.get("unit") as string;
+
+        const result = await addItemToLocation({
+            itemId,
+            locationId,
+            quantity,
+            unit
+        });
+
+        if (!result) {
+            return fail(403);
+        }
     }
 }

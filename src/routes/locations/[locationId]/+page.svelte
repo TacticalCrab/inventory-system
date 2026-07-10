@@ -7,11 +7,14 @@
 	import UpdateQuantityModal from '$lib/ui/items/UpdateQuantityModal/UpdateQuantityModal.svelte';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
     import { page } from "$app/state";
+	import BarcodeAdd from '$lib/ui/common/buttons/BarcodeAdd.svelte';
+	import AddItemToLocationByBarcodeModal from '$lib/ui/locations/AddItemToLocationByBarcodeModal.svelte';
 
     let { data } = $props();
 
     let updateModal: UpdateItemModal;
     let updateQuantityModal: UpdateQuantityModal;
+    let barcodeModal: AddItemToLocationByBarcodeModal;
 
     const handleDelete = async (itemId: number) => {
         if (!itemId) {
@@ -31,7 +34,7 @@
         }
     };
 
-    const handleRemoveItemFromLocation = async (itemId: number, locationId: number) => {
+    const handleRemoveItemFromLocation = async (itemId: number, locationId: number | null = null) => {
         if (!itemId || !locationId) {
             return;
         }
@@ -81,6 +84,8 @@
         bind:value={searchInput}
         onSearchClick={() => handleSearch()}
     />
+
+    <BarcodeAdd onclick={() => barcodeModal.openModal(data.locationData?.id)}/>
 </div>
 
 <div class="mt-4">
@@ -97,3 +102,4 @@
 
 <UpdateItemModal bind:this={updateModal}/>
 <UpdateQuantityModal bind:this={updateQuantityModal}/>
+<AddItemToLocationByBarcodeModal bind:this={barcodeModal}/>
