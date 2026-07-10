@@ -1,18 +1,19 @@
 <script lang="ts">
     import { page } from "$app/state";
+	import Modal from "$lib/ui/common/Modal.svelte";
     import { getToastContext } from "$lib/ui/toaster/toast.svelte";
     import type { Item } from "$lib/ui/types/Item";
     import ItemForm from "../ItemForm/ItemForm.svelte";
 
     const toastState = getToastContext();
 
-    let dialog: HTMLDialogElement;
+    let dialog: Modal;
     let form: ItemForm;
 
     export function openModal(itemData: Item) {
         form.clear();
         errorMessage = "";
-        dialog.showModal();
+        dialog.openModal();
         form.setData(itemData);
     }
 
@@ -20,17 +21,12 @@
 
 </script>
 
-<dialog
-  bind:this={dialog} 
-  class="modal">
-  <div class="modal-box max-w-200">
-    <form method="dialog">
-      <button
-        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" >
-        ✕
-      </button>
-    </form>
-
+<Modal 
+  bind:this={dialog}
+  style={{
+    width: 200
+  }}
+  >
     <ItemForm
       title="Update Item"
       method="POST"
@@ -44,5 +40,4 @@
           toastState.success("Item Updated!");
         }
       }}/>
-  </div>
-</dialog>
+</Modal>

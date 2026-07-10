@@ -2,7 +2,9 @@
     import { enhance } from '$app/forms';
 	import { invalidate } from '$app/navigation';
 	import { QUANITYT_UNITS } from '$lib/const';
-    let dialog: HTMLDialogElement;
+	import Modal from '$lib/ui/common/Modal.svelte';
+
+    let dialog: Modal;
 
     interface ItemData {
         id: number;
@@ -30,22 +32,13 @@
 
         _locationId = locationId;
 
-        dialog.showModal();
+        dialog.openModal();
     }
 
 </script>
 
-<dialog
-  bind:this={dialog} 
-  class="modal">
-  <div class="modal-box w-100">
-    <form method="dialog">
-      <button
-        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" >
-        ✕
-      </button>
-    </form>
-
+<Modal 
+    bind:this={dialog}>
     <form
         action="?/updateItemQuantity"
         method="POST"
@@ -101,5 +94,4 @@
             <button type="submit" class="btn btn-success mt-4 w-full">Save</button>
         </div>
     </form>
-  </div>
-</dialog>
+</Modal>

@@ -1,13 +1,14 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
 	import { QUANITYT_UNITS } from '$lib/const';
+	import Modal from '$lib/ui/common/Modal.svelte';
 
     interface Location {
         id: number;
         name: string;
     }
 
-    let dialog: HTMLDialogElement;
+    let dialog: Modal;
     let locations: Location[] = $state([]);
 
     let itemData: number = $state(-1)
@@ -18,22 +19,13 @@
         const response = await fetch(`/items/locations?exclude_item=${itemId}`);
         locations = await response.json();
 
-        dialog.showModal();
+        dialog.openModal();
     }
 
 </script>
 
-<dialog
-  bind:this={dialog} 
-  class="modal">
-  <div class="modal-box w-100">
-    <form method="dialog">
-      <button
-        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" >
-        ✕
-      </button>
-    </form>
-
+<Modal 
+    bind:this={dialog}>
     <form
         action="?/addToLocation"
         method="POST"
@@ -73,5 +65,4 @@
             <button type="submit" class="btn btn-success mt-4 w-full">Save</button>
         </div>
     </form>
-  </div>
-</dialog>
+</Modal>
