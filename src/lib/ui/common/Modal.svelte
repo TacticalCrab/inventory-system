@@ -36,7 +36,7 @@
   bind:this={dialog} 
   class="modal">
   <div class={[
-    "modal-box",
+    "modal-box overflow-y-auto max-h-[80vh]",
     [
         style.width === 100 && "max-w-100",
         style.width === 200 && "max-w-200",
@@ -49,7 +49,6 @@
         ✕
       </button>
     </form>
-
     {#if children}
         {@render children()}
     {/if}
