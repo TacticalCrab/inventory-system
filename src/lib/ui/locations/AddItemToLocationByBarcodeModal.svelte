@@ -23,7 +23,7 @@
         const queryParams = new SvelteURLSearchParams();
         queryParams.append("barcode", barcode);
 
-        const response = await fetch(`/items?${queryParams.toString()}`);
+        const response = await fetch(`/items/rest?${queryParams.toString()}`);
         const items: ItemWithOptions[] = await response.json();
 
         if (!_locationId) {
