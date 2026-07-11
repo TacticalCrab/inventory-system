@@ -1,4 +1,6 @@
 <script lang="ts">
+	import CreateButton from "$lib/ui/common/buttons/CreateButton.svelte";
+
     interface CategoryPickerProps {
         value?: string[];
         enableSearch?: boolean;
@@ -77,13 +79,16 @@
         </div>
     </fieldset>
     {#if !readonly}
-        <input
-            onkeydown={onkeydown}
-            bind:value={searchValue}
-            type="text"
-            placeholder="Search..."
-            class="input input-sm w-full" 
-        />
+        <div class="flex gap-2">
+            <input
+                onkeydown={onkeydown}
+                bind:value={searchValue}
+                type="text"
+                placeholder="Search..."
+                class="input input-sm w-full" 
+            />
+            <CreateButton onclick={() => onCategoryAdd(searchValue)}/>
+        </div>
     {/if}
     {#if enableSearch && !readonly}
         <div class="flex flex-wrap gap-1 p-2">
