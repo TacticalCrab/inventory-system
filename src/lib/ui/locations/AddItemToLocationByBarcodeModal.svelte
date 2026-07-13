@@ -79,5 +79,6 @@
     </div>
 </Modal>
 
-<AddToLocationModal 
+<AddToLocationModal
+    action="?/addToLocation"
     bind:this={locationModal}/>

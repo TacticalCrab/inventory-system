@@ -74,7 +74,7 @@
         bind:value={searchInput}
         onSearchClick={() => handleSearch()}
     />
-    <CreateItemModal/>
+    <CreateItemModal action="?/create"/>
 </div>
 
 <ItemList
@@ -85,5 +85,8 @@
     onCopyClick={handleCopy}
 />
 
-<AddToLocationModal bind:this={locationModal} />
-<UpdateItemModal bind:this={updateModal}/>
+<AddToLocationModal 
+    action="?/addToLocation"
+    bind:this={locationModal}/>
+
+<UpdateItemModal action="?/update" bind:this={updateModal}/>

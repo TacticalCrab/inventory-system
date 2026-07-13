@@ -4,6 +4,14 @@
     import { getToastContext } from "$lib/ui/toaster/toast.svelte";
     import ItemForm from "../ItemForm/ItemForm.svelte";
 
+    interface Props {
+        action: `?/${string}`;
+    }
+
+    const {
+        action
+    }: Props = $props();
+
     const toastState = getToastContext();
 
     let dialog: Modal;
@@ -28,7 +36,7 @@
   <ItemForm
     title="Create Item"
     method="POST"
-    action="?/create"
+    action={action}
     bind:this={form} 
     onsuccess={() => {
       if (dialog) {

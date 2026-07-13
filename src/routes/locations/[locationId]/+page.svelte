@@ -99,6 +99,6 @@
     {/if}
 </div>
 
-<UpdateItemModal bind:this={updateModal}/>
-<UpdateQuantityModal bind:this={updateQuantityModal}/>
+<UpdateItemModal action="?/update" bind:this={updateModal}/>
+<UpdateQuantityModal action="?/updateItemQuantity" bind:this={updateQuantityModal}/>
 <AddItemToLocationByBarcodeModal bind:this={barcodeModal}/>

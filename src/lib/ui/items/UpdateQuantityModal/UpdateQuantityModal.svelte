@@ -4,6 +4,14 @@
 	import { QUANITYT_UNITS } from '$lib/const';
 	import Modal from '$lib/ui/common/Modal.svelte';
 
+    interface Props {
+        action: `?/${string}`;
+    }
+
+    const {
+        action
+    }: Props = $props();
+
     let dialog: Modal;
 
     interface ItemData {
@@ -40,7 +48,7 @@
 <Modal 
     bind:this={dialog}>
     <form
-        action="?/updateItemQuantity"
+        action={action}
         method="POST"
         use:enhance={({formData}) => {
             if (_locationId === null) {

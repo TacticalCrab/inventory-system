@@ -1,9 +1,18 @@
 <script lang="ts">
     import { page } from "$app/state";
-	import Modal from "$lib/ui/common/Modal.svelte";
+    import Modal from "$lib/ui/common/Modal.svelte";
     import { getToastContext } from "$lib/ui/toaster/toast.svelte";
     import type { Item } from "$lib/ui/types/Item";
     import ItemForm from "../ItemForm/ItemForm.svelte";
+
+    interface Props {
+        action: `?/${string}`;
+    }
+
+    const {
+        action
+    }: Props = $props();
+
 
     const toastState = getToastContext();
 
@@ -30,7 +39,7 @@
     <ItemForm
       title="Update Item"
       method="POST"
-      action="?/update"
+      action={action}
       readonly={false}
       bind:this={form}
       errorMessage={errorMessage}

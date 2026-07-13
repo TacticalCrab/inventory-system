@@ -3,6 +3,14 @@
 	import { QUANITYT_UNITS } from '$lib/const';
 	import Modal from '$lib/ui/common/Modal.svelte';
 
+    interface Props {
+        action: `?/${string}`;
+    }
+
+    const {
+        action
+    }: Props = $props();
+
     interface Location {
         id: number;
         name: string;
@@ -29,7 +37,7 @@
 <Modal 
     bind:this={dialog}>
     <form
-        action="?/addToLocation"
+        action={action}
         method="POST"
         use:enhance={({formData}) => {
             formData.append("itemId", itemData.toString());
