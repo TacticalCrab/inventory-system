@@ -139,9 +139,12 @@
 	}
 </script>
 
-<div class="scanner-container">
-	<div class="controls">
-		<select bind:value={selectedDeviceId}>
+<div class="flex w-full flex-col items-center gap-4 text-base-content">
+	<div class="w-full">
+		<select
+			bind:value={selectedDeviceId}
+			class="w-full rounded-box border border-base-300 bg-base-100 px-3 py-2 text-sm text-base-content shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+		>
 			{#each devices as device (device.deviceId)}
 				<option value={device.deviceId}>
 					{device.label || `Camera ${devices.indexOf(device) + 1}`}
@@ -150,116 +153,29 @@
 		</select>
 	</div>
 
-	<div class="video-wrapper">
-		<video bind:this={videoElement} autoplay playsinline muted></video>
-		
-		<div class="overlay">
-			<div class="scan-window"></div>
+	<div class="relative w-full max-w-xl overflow-hidden rounded-box border border-base-300 bg-base-200 shadow-md aspect-4/3">
+		<video bind:this={videoElement} autoplay playsinline muted class="block h-full w-full object-cover"></video>
+
+		<div class="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
+			<div class="h-[35%] w-[70%] rounded-box border-2 border-success shadow-[0_0_0_4000px_rgba(15,23,42,0.6)]"></div>
 		</div>
 	</div>
 
-	<div class="actions">
-		<button onclick={captureAndProcess} disabled={isProcessing}>
+	<div class="w-full">
+		<button
+			onclick={captureAndProcess}
+			disabled={isProcessing}
+			class="w-full rounded-box bg-primary px-6 py-3 text-sm font-semibold text-primary-content shadow-sm transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60"
+		>
 			{isProcessing ? 'Processing...' : 'Capture & Scan'}
 		</button>
 	</div>
 
 	{#if scanResult}
-		<div class="result">
+		<div class="w-full rounded-box border border-info/30 bg-info/10 px-4 py-3 text-center text-sm font-medium text-base-content shadow-sm">
 			<strong>Result:</strong> {scanResult}
 		</div>
 	{/if}
 
-	<canvas bind:this={canvasElement} style="display: none;"></canvas>
+	<canvas bind:this={canvasElement} class="hidden"></canvas>
 </div>
-
-<style>
-	.scanner-container {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 16px;
-		max-width: 100%;
-		font-family: system-ui, -apple-system, sans-serif;
-	}
-
-	.controls select {
-		padding: 8px 12px;
-		border-radius: 6px;
-		font-size: 1rem;
-		border: 1px solid #ccc;
-		background: #fff;
-	}
-
-	.video-wrapper {
-		position: relative;
-		width: 100%;
-		max-width: 500px;
-		border-radius: 12px;
-		overflow: hidden;
-		background: #000;
-		aspect-ratio: 4/3;
-		display: flex;
-		align-items: center;
-	}
-
-	video {
-		width: 100%;
-		height: auto;
-		display: block;
-	}
-
-	/* Creates the transparent cutout effect */
-	.overlay {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		pointer-events: none;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		overflow: hidden;
-	}
-
-	.scan-window {
-		width: 70%;
-		height: 35%;
-		border: 2px solid #00ff00;
-		border-radius: 12px;
-		/* The huge box-shadow dims everything outside this element */
-		box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.6);
-	}
-
-	.actions button {
-		padding: 12px 24px;
-		font-size: 1rem;
-		font-weight: 600;
-		background-color: #007bff;
-		color: white;
-		border: none;
-		border-radius: 6px;
-		cursor: pointer;
-		transition: background-color 0.2s;
-	}
-
-	.actions button:hover:not(:disabled) {
-		background-color: #0056b3;
-	}
-	
-	.actions button:disabled {
-		background-color: #94c2ed;
-		cursor: not-allowed;
-	}
-
-	.result {
-		padding: 12px 20px;
-		background: #eef7ff;
-		color: #004085;
-		border: 1px solid #b8daff;
-		border-radius: 6px;
-		font-size: 1.1rem;
-		text-align: center;
-	}
-</style>
