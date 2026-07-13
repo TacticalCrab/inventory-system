@@ -37,12 +37,16 @@
             return;
         }
 
-        const formData = new FormData();
-        formData.set('id', itemId.toString());
+        const data = JSON.stringify({
+            id: itemId
+        });
 
-        const response = await fetch('?/delete', {
-            method: 'POST',
-            body: formData
+        const response = await fetch('/api/items', {
+            method: 'DELETE',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: data,
         });
 
         if (response.ok) {
@@ -55,12 +59,8 @@
             return;
         }
 
-        const formData = new FormData();
-        formData.set('id', itemId.toString());
-
-        const response = await fetch("?/copy", {
-            method: "POST",
-            body: formData
+        const response = await fetch(`/api/items/${itemId}/copy`, {
+            method: "POST"
         });
 
         if (response.ok) {

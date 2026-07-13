@@ -1,8 +1,7 @@
-import { db } from "$lib/server/db";
 import { createItem, getItem, getItems, updateItem } from "$lib/server/db/queries/item";
 import { item } from "$lib/server/db/schema";
 import { fail, type Actions } from "@sveltejs/kit";
-import { eq, ilike } from "drizzle-orm";
+import { ilike } from "drizzle-orm";
 import type { PageServerLoad } from "./$types";
 import type { Property } from "$lib/ui/types/Item";
 import { addItemToLocation } from "$lib/server/db/queries/locations";
@@ -62,23 +61,6 @@ export const actions: Actions = {
             properties: item.properties,
         });
     },
-
-    delete: async ({ request }) => {
-        const itemData = await request.formData();
-
-        if (!itemData.get("id")) {
-            return fail(403, {
-                missing: true,
-                message: "No ID provided"
-            });
-        }
-
-        const itemId = parseInt(itemData.get("id") as string);
-
-        await db.delete(item)
-            .where(eq(item.id, itemId));
-    },
-
     update: async ({request}) => {
         const itemData = await request.formData();
 

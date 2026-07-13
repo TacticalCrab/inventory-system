@@ -29,3 +29,18 @@ export const GET: RequestHandler = async ({url}) => {
 
     return json(itemsRows);
 }
+
+
+export const DELETE: RequestHandler = async ({request}) => {
+    const itemData = await request.json();
+
+    const itemId = itemData.id;
+    if (!itemId) {
+        return json({ status: 403 });
+    }
+
+    await db.delete(item)
+        .where(eq(item.id, itemId));
+
+    return json({ status: 200 });
+}
