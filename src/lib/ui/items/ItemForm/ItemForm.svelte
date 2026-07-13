@@ -41,7 +41,7 @@
     const onSearch = async (searchTerm: string) => {
         if (searchTerm.length < 2) return [];
         
-        const response = await fetch(`/items/categories?search=${searchTerm}`)
+        const response = await fetch(`/api/categories?search=${searchTerm}`)
         const categories: string[] = await response.json();
 
         return categories

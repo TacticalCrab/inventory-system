@@ -18,7 +18,7 @@
         itemData = itemId;
         forcedLocationId = locationId || null;
 
-        const response = await fetch(`/items/locations?exclude_item=${itemId}`);
+        const response = await fetch(`/api/locations?exclude_item=${itemId}`);
         locations = await response.json();
 
         dialog.openModal();
