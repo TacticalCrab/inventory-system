@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from "$app/paths";
+	import { formatDate } from "$lib/common/date";
 	import ChangeValueButton from "$lib/ui/common/buttons/ChangeValueButton.svelte";
 	import CopyButton from "$lib/ui/common/buttons/CopyButton.svelte";
 	import CreateButton from "$lib/ui/common/buttons/CreateButton.svelte";
@@ -68,15 +69,7 @@
 
     let formattedDate = $derived.by(() => {
         if (createdAt) {
-            const createdAtDate = new Date(createdAt);
-            const day = String(createdAtDate.getDate()).padStart(2, '0');
-            const month = String(createdAtDate.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed!
-            const year = createdAtDate.getFullYear();
-
-            const hours = String(createdAtDate.getHours()).padStart(2, '0');
-            const minutes = String(createdAtDate.getMinutes()).padStart(2, '0');
-
-            return `${day}.${month}.${year} ${hours}:${minutes}`;
+            return formatDate(createdAt);
         }
         return undefined;
     });
