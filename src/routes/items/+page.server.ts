@@ -3,8 +3,8 @@ import { item } from "$lib/server/db/schema";
 import { fail, type Actions } from "@sveltejs/kit";
 import { ilike } from "drizzle-orm";
 import type { PageServerLoad } from "./$types";
-import type { Property } from "$lib/ui/types/Item";
 import { addItemToLocation } from "$lib/server/db/queries/locations";
+import type { Property } from "$lib/types/Item";
 
 
 export const load: PageServerLoad = async ({depends, url}) => {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Item, LocationItem } from '../types/Item';
+	import type { Item, LocationItem } from '../../types/Item';
     import ItemCard from './ItemCard/ItemCard.svelte';
 
     interface Props {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Item } from '../types/Item';
+	import type { Item } from '../../types/Item';
     import ItemCard from './ItemCard/ItemCard.svelte';
 
     export interface ItemWithOptions extends Item {

@@ -9,14 +9,8 @@
 	import LocationButton from "$lib/ui/common/buttons/LocationButton.svelte";
 	import RemoveButton from "$lib/ui/common/buttons/RemoveButton.svelte";
 	import Barcode from "$lib/ui/common/icons/Barcode.svelte";
-	import type { Item } from "$lib/ui/types/Item";
+	import type { Item } from "$lib/types/Item";
 	import type { Snippet } from "svelte";
-
-    export interface Property {
-        id?: number;
-        name: string;
-        value: string;
-    }
 
     interface Props extends Item {
         quantity?: number | null;

@@ -1,7 +1,7 @@
 import {db, type DbTransaction} from "$lib/server/db";
 import { and, eq, inArray, SQL, sql } from "drizzle-orm";
 import { item, itemCategory, itemItemCategory, itemProperty } from "../schema";
-import type { Property } from "$lib/ui/types/Item";
+import type { Property } from "$lib/types/Item";
 
 export async function getItem(itemId: number) {
     const itemRow = await getItems([eq(item.id, itemId)])
@@ -29,7 +29,8 @@ export async function getItems(conditions: SQL<unknown>[] = []) {
                 columns: {
                     id: true,
                     name: true,
-                    value: true
+                    value: true,
+                    typeName: true
                 }
             },
             itemItemCategories: {

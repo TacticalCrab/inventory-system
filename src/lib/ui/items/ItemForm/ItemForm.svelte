@@ -3,8 +3,8 @@
 	import type { HTMLFormAttributes } from 'svelte/elements';
     import CategoryPicker from "./CategoryPicker/CategoryPicker.svelte";
     import PropertiesTableInput from './PropertiesTableInput/PropertiesTableInput.svelte';
-	import type { Property } from '../ItemCard/ItemCard.svelte';
 	import BarcodeInput from '$lib/ui/barcode/BarcodeInput.svelte';
+	import type { Property } from '$lib/types/Item';
 
     interface ItemFormProps {
         title?: string;

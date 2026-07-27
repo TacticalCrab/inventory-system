@@ -4,8 +4,8 @@ import { and, eq, ilike, inArray } from 'drizzle-orm';
 import { fail, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { updateItem } from '$lib/server/db/queries/item';
-import type { Property } from '$lib/ui/types/Item';
 import { addItemToLocation } from '$lib/server/db/queries/locations';
+import type { Property } from '$lib/types/Item';
 
 export const load: PageServerLoad = async ({ params, depends, url }) => {
     depends("location:data:items")
@@ -82,7 +82,8 @@ export const load: PageServerLoad = async ({ params, depends, url }) => {
                 columns: {
                     id: true,
                     name: true,
-                    value: true
+                    value: true,
+                    typeName: true
                 }
             },
             itemItemCategories: {
