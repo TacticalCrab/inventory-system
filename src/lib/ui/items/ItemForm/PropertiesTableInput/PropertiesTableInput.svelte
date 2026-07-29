@@ -1,10 +1,15 @@
 <script lang="ts">
+	import { isDate } from "$lib/common/date";
+	import { isNumber } from "$lib/common/number";
+	import { PropertyTypeName } from "$lib/types/Item";
 	import DeleteButton from "$lib/ui/common/buttons/DeleteButton.svelte";
+	import Calendar from "$lib/ui/common/Calendar.svelte";
 
     type TableRow = {
         id?: number;
         name: string;
         value: string;
+        typeName: PropertyTypeName;
     };
 
     interface PropertiesTableInputProps {
@@ -21,12 +26,67 @@
         tableRows.push({
             id: undefined,
             name,
-            value
+            value,
+            typeName: PropertyTypeName.STR
         });
     }
 
     const removeRow = (rowIndex: number) => {
         tableRows.splice(rowIndex, 1);
+    }
+
+    function handleTypeChange(tableRow: TableRow) {
+        if (tableRow.typeName === PropertyTypeName.NUMBER && !isNumber(tableRow.value)) {
+            tableRow.value = ""
+        }
+
+        else if (tableRow.typeName === PropertyTypeName.DATE && !isDate(tableRow.value)) {
+            tableRow.value = "";
+        }
+    }
+
+      function validateValueRow(value: string, type: PropertyTypeName): boolean {
+        switch (type) {
+            case PropertyTypeName.NUMBER:
+                return isNumber(value);
+
+            case PropertyTypeName.DATE:
+                return isDate(value);
+        }
+
+        return true;
+    }
+
+    function handleBeforeInput(
+        event: InputEvent,
+        tableRow: TableRow
+    ) {
+        if (event.inputType.startsWith("delete")) {
+            return;
+        }
+
+        const element = event.currentTarget as HTMLTableCellElement;
+        const selection = window.getSelection();
+
+        if (!selection || selection.rangeCount === 0) {
+            return;
+        }
+
+        const currentValue = element.innerText;
+        const range = selection.getRangeAt(0);
+
+        const start = range.startOffset;
+        const end = range.endOffset;
+        const insertedText = event.data ?? "";
+
+        const nextValue =
+            currentValue.slice(0, start) +
+            insertedText +
+            currentValue.slice(end);
+
+        if (!validateValueRow(nextValue, tableRow.typeName)) {
+            event.preventDefault();
+        }
     }
 
     export function clear() {
@@ -51,6 +111,9 @@
                         <th>
                             Value
                         </th>
+                        <th class="w-20">
+                            Type
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -67,14 +130,40 @@
                                     class="align-top"
                                     contenteditable="true" 
                                     bind:innerText={tableRow.name}></td>
-                                <td
-                                    class="align-top"
-                                    contenteditable="true"
-                                    bind:innerText={tableRow.value}></td>
+
+                                {#if tableRow.typeName !== PropertyTypeName.DATE}
+                                    <td
+                                        class="align-top"
+                                        contenteditable="true"
+                                        bind:innerText={tableRow.value}
+                                        onbeforeinput={(event) => handleBeforeInput(event, tableRow)}
+                                        ></td>
+                                {:else}
+                                    <td class="align-top">
+                                        <Calendar bind:value={tableRow.value}/>
+                                    </td>
+                                {/if}
                             {:else}
                                 <td>{tableRow.name}</td>
                                 <td>{tableRow.value}</td>
                             {/if}
+                            <td class="w-20">
+                                <select 
+                                    class="select select-xs text-xs" 
+                                    bind:value={tableRow.typeName}
+                                    onchange={() => handleTypeChange(tableRow)}
+                                    >
+                                    <option value={PropertyTypeName.STR}>
+                                        {PropertyTypeName.STR}
+                                    </option>
+                                    <option value={PropertyTypeName.NUMBER}>
+                                        {PropertyTypeName.NUMBER}
+                                    </option>
+                                    <option value={PropertyTypeName.DATE}>
+                                        {PropertyTypeName.DATE}
+                                    </option>
+                                </select>
+                            </td>
                         </tr>
                     {/each}
                 </tbody>

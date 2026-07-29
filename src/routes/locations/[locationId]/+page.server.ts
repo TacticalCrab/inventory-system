@@ -97,7 +97,7 @@ export const load: PageServerLoad = async ({ params, depends, url }) => {
     const items = rawItems.map(({ itemProperties, itemItemCategories, stockItems, ...item }) => ({
         ...item,
         properties: [
-            ...itemProperties
+            ...itemProperties as Property[]
         ],
         categories: itemItemCategories.map((iic) => iic.itemCategory.name),
         quantity: stockItems?.[0].quantity,

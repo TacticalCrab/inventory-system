@@ -1,8 +1,14 @@
+export enum PropertyTypeName {
+    STR = 'str',
+    NUMBER = 'number',
+    DATE = 'date'
+}
+
 export interface Property {
     id?: number;
     name: string;
     value: string;
-    typeName: string;
+    typeName: PropertyTypeName;
 }
 
 export interface Location {

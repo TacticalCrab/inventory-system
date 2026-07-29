@@ -1,7 +1,7 @@
 import {db, type DbTransaction} from "$lib/server/db";
 import { and, eq, inArray, SQL, sql } from "drizzle-orm";
 import { item, itemCategory, itemItemCategory, itemProperty } from "../schema";
-import type { Property } from "$lib/types/Item";
+import { PropertyTypeName, type Property } from "$lib/types/Item";
 
 export async function getItem(itemId: number) {
     const itemRow = await getItems([eq(item.id, itemId)])
@@ -58,7 +58,7 @@ export async function getItems(conditions: SQL<unknown>[] = []) {
     return rawItems.map(({ itemProperties, itemItemCategories, stockItems, ...item }) => ({
         ...item,
         properties: [
-            ...itemProperties
+            ...itemProperties as Property[]
         ],
         categories: itemItemCategories.map((iic) => iic.itemCategory.name),
         locations: stockItems.map(({stock}) => stock.location).filter(l => l !== null).map(l => ({
@@ -121,7 +121,7 @@ export async function createItem(itemData: CreateItemData) {
                         itemId: newItem.id,
                         name: property.name,
                         value: property.value,
-                        typeName: "str"
+                        typeName: PropertyTypeName.STR
                     });
                 }))
             }
@@ -272,7 +272,8 @@ export async function updateItemPropertiesByIds(tx: DbTransaction, itemId: numbe
                 .update(itemProperty)
                 .set({
                     name: property.name,
-                    value: property.value
+                    value: property.value,
+                    typeName: property.typeName
                 })
                 .where(
                     and(
@@ -286,7 +287,7 @@ export async function updateItemPropertiesByIds(tx: DbTransaction, itemId: numbe
                 .values({
                     name: property.name || '',
                     value: property.value || '',
-                    typeName: 'str',
+                    typeName: property.typeName || '',
                     itemId: itemId
                 });
         }
