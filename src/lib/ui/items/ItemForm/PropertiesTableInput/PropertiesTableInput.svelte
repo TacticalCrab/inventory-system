@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { isDate } from "$lib/common/date";
 	import { isNumber } from "$lib/common/number";
+	import { isSpecialProperty } from "$lib/common/specialProperties";
 	import { PropertyTypeName } from "$lib/types/Item";
 	import DeleteButton from "$lib/ui/common/buttons/DeleteButton.svelte";
 	import Calendar from "$lib/ui/common/Calendar.svelte";
+	import { SvelteSet } from "svelte/reactivity";
 
     type TableRow = {
         id?: number;
@@ -21,6 +23,8 @@
         value: tableRows = $bindable([]),
         readonly
     }: PropertiesTableInputProps = $props();
+
+    const specialRows = new SvelteSet();
 
     const addRow = (name: string, value: string) => {
         tableRows.push({
@@ -89,9 +93,30 @@
         }
     }
 
+    function handlePropertyInput(tableRow: TableRow) {
+        const isSpecial = isSpecialProperty(tableRow.name);
+
+        if (specialRows.has(tableRow) && !isSpecial) {
+            specialRows.delete(tableRow)
+        }
+
+        else if (isSpecial) {
+            tableRow.typeName = PropertyTypeName.DATE;
+            specialRows.add(tableRow);
+        }
+    }
+
     export function clear() {
         tableRows = [];
     }
+
+    $effect(() => {
+        for (const tableRow of tableRows) {
+            if (isSpecialProperty(tableRow.name)) {
+                specialRows.add(tableRow);
+            }
+        }
+    })
 
 </script>
 
@@ -129,7 +154,8 @@
                                 <td
                                     class="align-top"
                                     contenteditable="true" 
-                                    bind:innerText={tableRow.name}></td>
+                                    bind:innerText={tableRow.name}
+                                    oninput={() => handlePropertyInput(tableRow)}></td>
 
                                 {#if tableRow.typeName !== PropertyTypeName.DATE}
                                     <td
@@ -148,10 +174,11 @@
                                 <td>{tableRow.value}</td>
                             {/if}
                             <td class="w-20">
-                                <select 
-                                    class="select select-xs text-xs" 
-                                    bind:value={tableRow.typeName}
-                                    onchange={() => handleTypeChange(tableRow)}
+                                <select
+                                        disabled={specialRows.has(tableRow)}
+                                        class="select select-xs text-xs" 
+                                        bind:value={tableRow.typeName}
+                                        onchange={() => handleTypeChange(tableRow)}
                                     >
                                     <option value={PropertyTypeName.STR}>
                                         {PropertyTypeName.STR}
