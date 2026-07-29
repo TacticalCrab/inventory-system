@@ -193,13 +193,13 @@
                                 <td>{tableRow.name}</td>
                                 <td>{tableRow.value}</td>
                             {/if}
-                            <td class="w-20">
+                            <td class="w-20 min-w-26">
                                 <select
-                                        disabled={specialRows.has(tableRow)}
-                                        class="select select-xs text-xs" 
-                                        bind:value={tableRow.typeName}
-                                        onchange={() => handleTypeChange(tableRow)}
-                                    >
+                                    disabled={specialRows.has(tableRow)}
+                                    class="select select-xs pr-10 text-xs"
+                                    bind:value={tableRow.typeName}
+                                    onchange={() => handleTypeChange(tableRow)}
+                                >
                                     <option value={PropertyTypeName.STR}>
                                         {PropertyTypeName.STR}
                                     </option>
