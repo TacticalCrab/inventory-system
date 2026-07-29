@@ -27,3 +27,13 @@ export function isDate(value: string): boolean {
     date.getUTCDate() === day
   );
 }
+
+export function compareDates(
+	a: string | Date | null | undefined,
+	b: string | Date | null | undefined
+): number {
+	const aTime = a ? new Date(a).getTime() : Number.POSITIVE_INFINITY;
+	const bTime = b ? new Date(b).getTime() : Number.POSITIVE_INFINITY;
+
+	return aTime - bTime;
+}

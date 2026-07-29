@@ -82,7 +82,9 @@
 	onclick={toggleCalendar}
 	style="anchor-name: --cally1"
 >
-	{selectedDate || 'Pick a date'}
+	<span class="text-[10px] sm:text-sm">
+		{selectedDate || 'Pick a date'}
+	</span>
 </button>
 
 <div

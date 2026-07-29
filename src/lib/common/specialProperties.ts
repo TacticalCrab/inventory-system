@@ -6,7 +6,7 @@ export enum SpecialPRoperties {
 
 export const isSpecialProperty = (property: string) => (Object.values(SpecialPRoperties) as string[]).includes(property);
 
-export const getSpecialPropertyType = (property: SpecialPRoperties) => {
+export const getSpecialPropertyType = (property: SpecialPRoperties | string) => {
     switch (property) {
         case "#expire_date":
             return PropertyTypeName.DATE;

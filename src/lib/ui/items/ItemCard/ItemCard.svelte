@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { resolve } from "$app/paths";
-	import { formatDate } from "$lib/common/date";
+	import { compareDates, formatDate } from "$lib/common/date";
 	import ChangeValueButton from "$lib/ui/common/buttons/ChangeValueButton.svelte";
 	import CopyButton from "$lib/ui/common/buttons/CopyButton.svelte";
 	import CreateButton from "$lib/ui/common/buttons/CreateButton.svelte";
@@ -70,15 +70,14 @@
         return undefined;
     });
 
-    let specialProperties = $derived.by(() => {
-        return Object.fromEntries(properties
-            ?.filter((prop) => isSpecialProperty(prop.name))
-            .map((prop) => [prop.name, prop.value]) || []
-        );
-    });
-
     let normalPropertes = $derived.by(() => {
         return properties?.filter((prop) => !isSpecialProperty(prop.name));
+    });
+
+    let expireDateProperties = $derived.by(() => {
+        return properties
+            ?.filter((prop) => isSpecialProperty(prop.name) && prop.name === SpecialPRoperties.EXPIRE_DATE)
+            .toSorted((a, b) => compareDates(a.value, b.value));
     });
 
     const _onAddClick = () => {
@@ -161,8 +160,12 @@
                 </div>
             {/if}
         </div>
-        {#if specialProperties[SpecialPRoperties.EXPIRE_DATE]}
-                <ExpiryDateBadge expiryDate={specialProperties[SpecialPRoperties.EXPIRE_DATE]}/>
+        {#if expireDateProperties && expireDateProperties.length > 0}
+            <div class="flex gap-2 flex-wrap">
+                {#each expireDateProperties as expiryDate (expiryDate.id)}
+                    <ExpiryDateBadge expiryDate={expiryDate.value}/>
+                {/each}
+            </div>
         {/if}
         {#if categories && categories.length > 0}
             <div class="flex gap-1 flex-wrap">

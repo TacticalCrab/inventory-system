@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { isDate } from "$lib/common/date";
 	import { isNumber } from "$lib/common/number";
-	import { isSpecialProperty } from "$lib/common/specialProperties";
+	import { getSpecialPropertyType, isSpecialProperty, SpecialPRoperties } from "$lib/common/specialProperties";
 	import { PropertyTypeName } from "$lib/types/Item";
 	import DeleteButton from "$lib/ui/common/buttons/DeleteButton.svelte";
+	import ExpireDateButton from "$lib/ui/common/buttons/ExpireDateButton.svelte";
 	import Calendar from "$lib/ui/common/Calendar.svelte";
 	import { SvelteSet } from "svelte/reactivity";
 
@@ -27,12 +28,24 @@
     const specialRows = new SvelteSet();
 
     const addRow = (name: string, value: string) => {
-        tableRows.push({
-            id: undefined,
-            name,
-            value,
-            typeName: PropertyTypeName.STR
-        });
+        if (isSpecialProperty(name)) {
+            const tableRow = {
+                id: undefined,
+                name,
+                value,
+                typeName: getSpecialPropertyType(name) || PropertyTypeName.STR
+            } as TableRow;
+
+            tableRows.push(tableRow);
+            specialRows.add(tableRow);
+        } else {
+            tableRows.push({
+                id: undefined,
+                name,
+                value,
+                typeName: PropertyTypeName.STR
+            });
+        }
     }
 
     const removeRow = (rowIndex: number) => {
@@ -118,13 +131,14 @@
         }
     })
 
+    const tdStyle = "w-50 max-w-50";
 </script>
 
 <div class="rounded-field border-neutral-content border p-2 overflow-x-hidden">
     <div class="overflow-x-auto">
-        <fieldset class="fieldset">
+        <fieldset class="fieldset min-w-0">
             <legend class="fieldset-legend">Properties</legend>
-            <table class="table table-xs table-fixed table-zebra whitespace-normal wrap-break-word [word-break:break-word]">
+            <table class="table table-xs sm:table-fixed table-zebra">
                 <thead>
                     <tr>
                         <th class="w-20">
@@ -152,14 +166,20 @@
                             </td>
                             {#if !readonly}
                                 <td
-                                    class="align-top"
+                                    class={[
+                                        "align-top",
+                                        tdStyle
+                                    ]}
                                     contenteditable="true" 
                                     bind:innerText={tableRow.name}
                                     oninput={() => handlePropertyInput(tableRow)}></td>
 
                                 {#if tableRow.typeName !== PropertyTypeName.DATE}
                                     <td
-                                        class="align-top"
+                                        class={[
+                                            "align-top",
+                                            tdStyle
+                                        ]}
                                         contenteditable="true"
                                         bind:innerText={tableRow.value}
                                         onbeforeinput={(event) => handleBeforeInput(event, tableRow)}
@@ -198,8 +218,11 @@
         </fieldset>
     </div>
     {#if !readonly}
-        <button type="button" class="btn btn-sm btn-success w-full mt-4" onclick={() => addRow("", "")}>
-        Add row
+        <div class="flex justify-center">
+            <ExpireDateButton onclick={() => addRow(SpecialPRoperties.EXPIRE_DATE, "")}/>
+        </div>
+        <button type="button" class="btn btn-sm btn-success w-full mt-2" onclick={() => addRow("", "")}>
+            Add row
         </button>
     {/if}
 </div>
