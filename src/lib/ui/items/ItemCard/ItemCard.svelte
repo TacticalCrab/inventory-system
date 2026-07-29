@@ -11,6 +11,8 @@
 	import Barcode from "$lib/ui/common/icons/Barcode.svelte";
 	import type { Item } from "$lib/types/Item";
 	import type { Snippet } from "svelte";
+	import { isSpecialProperty, SpecialPRoperties } from "$lib/common/specialProperties";
+	import ExpiryDateBadge from "$lib/ui/common/ExpiryDateBadge.svelte";
 
     interface Props extends Item {
         quantity?: number | null;
@@ -66,6 +68,17 @@
             return formatDate(createdAt);
         }
         return undefined;
+    });
+
+    let specialProperties = $derived.by(() => {
+        return Object.fromEntries(properties
+            ?.filter((prop) => isSpecialProperty(prop.name))
+            .map((prop) => [prop.name, prop.value]) || []
+        );
+    });
+
+    let normalPropertes = $derived.by(() => {
+        return properties?.filter((prop) => !isSpecialProperty(prop.name));
     });
 
     const _onAddClick = () => {
@@ -148,6 +161,9 @@
                 </div>
             {/if}
         </div>
+        {#if specialProperties[SpecialPRoperties.EXPIRE_DATE]}
+                <ExpiryDateBadge expiryDate={specialProperties[SpecialPRoperties.EXPIRE_DATE]}/>
+        {/if}
         {#if categories && categories.length > 0}
             <div class="flex gap-1 flex-wrap">
                 {#each categories as category (category)}
@@ -163,13 +179,13 @@
                 </div>
             </details>
         {/if}
-        {#if properties && properties.length > 0}
+        {#if normalPropertes && normalPropertes.length > 0}
             <details class="collapse collapse-arrow bg-base-100 border border-base-300" open={openProperties}>
                 <summary class="collapse-title font-semibold">Properties</summary>
                 <div class="collapse-content overflow-x-auto">
                     <table class="table table-xs table-fixed whitespace-normal wrap-break-word [word-break:break-word]">
                         <tbody>
-                            {#each properties as prop (prop.id)}
+                            {#each normalPropertes as prop (prop.id)}
                                 <tr>
                                     <td class="align-top">
                                         {prop.name}
