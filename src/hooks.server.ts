@@ -1,7 +1,20 @@
-import type { Handle } from '@sveltejs/kit';
+import type { Handle, ServerInit } from '@sveltejs/kit';
 import { building } from '$app/environment';
 import { auth } from '$lib/server/auth';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
+import { Notifier } from '$lib/server/common/Notifier';
+import { NtfySender } from '$lib/server/common/NotificationSenders/NtfySender';
+import { ConsoleSender } from '$lib/server/common/NotificationSenders/ConsoleSender';
+
+
+export const init: ServerInit = async () => {
+    console.log('Initializing server...');
+
+    const notifier = Notifier.getInstance();
+	notifier
+		.registerSender(new NtfySender())
+		.registerSender(new ConsoleSender());
+};
 
 const handleBetterAuth: Handle = async ({ event, resolve }) => {
 	const session = await auth.api.getSession({ headers: event.request.headers });

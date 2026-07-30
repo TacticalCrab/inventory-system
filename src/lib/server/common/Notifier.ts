@@ -1,30 +1,41 @@
-import { env } from '$env/dynamic/private';
+export enum MessageType {
+    DEBUG = "DEBUG",
+    INFO = "INFO",
+    ALL = "ALL"
+}
+
+export interface NotificationSender {
+    send(message: string, messageType?: MessageType): Promise<void> | void;
+    getAvailableMessageTypes(): Set<MessageType> | MessageType.ALL;
+}
 
 export class Notifier {
-    private channel: string | null = null;
+    private senders: Set<NotificationSender> = new Set();
+    private static _instance: Notifier | null = null;
 
-    constructor() {
-        if (!env.NTFY_CHANNEL) {
-            console.error("Env not NTFY_CHANNEL not set.");
-            return;
+    private constructor() {};
+
+    static getInstance() {
+        if (!Notifier._instance) {
+            Notifier._instance = new Notifier();
         }
 
-        this.channel = env.NTFY_CHANNEL || null;
-    };
+        return Notifier._instance;
+    }
 
-    async sendMessage(message: string) {
-        if (this.channel === null) {
-            console.error("Channel not defined skipping NTFY.")
-            return;
-        }
+    registerSender(sender: NotificationSender) {
+        this.senders.add(sender)
 
-        const response = await fetch(`https://ntfy.sh/${this.channel}`, {
-            method: "POST",
-            body: message
-        });
+        return this;
+    }
 
-        if (!response.ok) {
-            console.error("Something went wrong", response.status, response.statusText);
+    async sendMessage(message: string, messageType: MessageType = MessageType.INFO) {
+        for (const sender of this.senders) {
+            const availableMessageTypes = sender.getAvailableMessageTypes();
+
+            if (availableMessageTypes === MessageType.ALL || availableMessageTypes.has(messageType)) {
+                sender.send(message);
+            }
         }
     }
 }
