@@ -5,6 +5,7 @@ import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { Notifier } from '$lib/server/common/Notifier';
 import { NtfySender } from '$lib/server/common/NotificationSenders/NtfySender';
 import { ConsoleSender } from '$lib/server/common/NotificationSenders/ConsoleSender';
+import initCron from "$lib/server/cron";
 
 
 export const init: ServerInit = async () => {
@@ -14,6 +15,8 @@ export const init: ServerInit = async () => {
 	notifier
 		.registerSender(new NtfySender())
 		.registerSender(new ConsoleSender());
+
+	initCron();
 };
 
 const handleBetterAuth: Handle = async ({ event, resolve }) => {

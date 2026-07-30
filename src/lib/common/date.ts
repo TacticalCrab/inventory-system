@@ -37,3 +37,15 @@ export function compareDates(
 
 	return aTime - bTime;
 }
+
+export function computeDaysLeft(
+  a: string | Date | null | undefined,
+	b: string | Date | null | undefined
+) {
+  const aTime = a ? new Date(a).getTime() : Number.POSITIVE_INFINITY;
+	const bTime = b ? new Date(b).getTime() : Number.POSITIVE_INFINITY;
+
+  const timeLeft = aTime - bTime;
+
+  return Math.round(timeLeft / 1000 / 60 / 60 / 24);
+}
