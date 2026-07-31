@@ -5,6 +5,8 @@
 	import ToastContainer from '$lib/ui/toaster/ToastContainer.svelte';
 	import { setToastContext } from '$lib/ui/toaster/toast.svelte';
 	import ThemeToggle from '$lib/ui/common/toggle/ThemeToggle.svelte';
+	import SettingsButton from '$lib/ui/common/buttons/SettingsButton.svelte';
+	import { goto } from '$app/navigation';
 
 	setToastContext();
 
@@ -43,7 +45,11 @@
 				</div>
 			</div>
 		</div>
-		<ThemeToggle/>
+		<div class="flex gap-2 items-center">
+			<ThemeToggle defaultTheme={data.config.defaultTheme}/>
+			<SettingsButton onclick={() => goto(resolve("/settings"))}/>
+		</div>
+		
 	</div>
 </div>
 {@render children()}

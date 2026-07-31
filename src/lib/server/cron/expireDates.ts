@@ -1,14 +1,14 @@
-import cron from 'node-cron';
+import cron, { type ScheduledTask } from 'node-cron';
 import { db } from '../db';
 import { item, itemProperty } from '../db/schema';
 import { and, eq, isNotNull } from 'drizzle-orm';
 import { computeDaysLeft } from '$lib/common/date';
 import { Notifier } from '../common/Notifier';
+import { ConfigProvider } from '../config/ConfigProvider';
 
-export const expireDatesCron = () => {
-    const notifier = Notifier.getInstance();
 
-    cron.schedule('0 12 * * *', async () => {
+const createExpireDatesTask = (schedule: string) => {
+    return cron.createTask(schedule, async () => {
         const items = await db
             .select({
                 id: item.id,
@@ -43,6 +43,32 @@ export const expireDatesCron = () => {
         }
 
         const message = `Expires Soon:\n${expiresMessage}Overdue:\n${overdueMessage}`;
+
+        const notifier = Notifier.getInstance();
         notifier.sendMessage(message);
+    });
+}
+
+export const expireDatesCron = () => {
+    const config = ConfigProvider.getInstance();
+
+    let currentTask: ScheduledTask | undefined;
+    config.onInit((config) => {
+        if (config.enableExpireDateNotifications) {
+            currentTask = createExpireDatesTask(config.notificationCronSchedule);
+            currentTask.start();
+        }
+    });
+
+    config.onChange((config) => {
+        if (config.enableExpireDateNotifications) {
+            currentTask?.destroy();
+            currentTask = createExpireDatesTask(config.notificationCronSchedule);
+            currentTask.start();
+            return;
+        }
+
+        currentTask?.destroy();
+        currentTask = undefined;
     });
 }

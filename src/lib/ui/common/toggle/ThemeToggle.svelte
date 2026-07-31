@@ -1,10 +1,19 @@
 <script lang="ts">
   // 1. Create a reactive state for the dark mode checkbox
+
+  interface Props {
+    defaultTheme?: 'dark' | 'light';
+  }
+
+  const {
+    defaultTheme
+  }: Props = $props();
+
   let isDark = $state(false);
 
   $effect(() => {
     // 2. Read the initial value from localStorage safely on mount
-    const savedTheme = localStorage.getItem('theme');
+    const savedTheme = localStorage.getItem('theme') || defaultTheme;
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
     // Set the initial checkbox state

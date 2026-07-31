@@ -6,10 +6,13 @@ import { Notifier } from '$lib/server/common/Notifier';
 import { NtfySender } from '$lib/server/common/NotificationSenders/NtfySender';
 import { ConsoleSender } from '$lib/server/common/NotificationSenders/ConsoleSender';
 import initCron from "$lib/server/cron";
+import { ConfigProvider } from '$lib/server/config/ConfigProvider';
 
 
 export const init: ServerInit = async () => {
     console.log('Initializing server...');
+
+	await ConfigProvider.getInstance().init();
 
     const notifier = Notifier.getInstance();
 	notifier
