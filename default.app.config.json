@@ -1,0 +1,5 @@
+{
+    "defaultTheme": "dark",
+    "notificationCronSchedule": "0 0 12 * * *",
+    "enableExpireDateNotifications": false
+}
