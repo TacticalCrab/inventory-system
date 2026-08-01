@@ -27,3 +27,4 @@ test-results
 *storybook.log
 storybook-static
 config.json
+ecosystem.config.cjs
